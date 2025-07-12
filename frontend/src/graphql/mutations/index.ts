@@ -9,6 +9,7 @@ export const REGISTER_USER_MUTATION = gql`
         username
         email
         birthYear
+        initialSetupDone
         postMealPreferences {
           _id
           userId
@@ -32,6 +33,7 @@ export const LOGIN_MUTATION = gql`
         username
         email
         birthYear
+        initialSetupDone
         postMealPreferences {
           _id
           userId

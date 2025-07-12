@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-errors";
 import User, { GenderType, IUser } from "../../models/User";
 import getLoggedInUserId from "../../middleware/getLoggedInUserId";
 import { generateToken } from "../../utils";
+import { Types } from "mongoose";
 
 interface RegisterInput {
   username: string;
@@ -15,6 +16,10 @@ interface RegisterInput {
 interface LoginInput {
   email: string;
   password: string;
+}
+interface UpdateInitialSetupDoneForUserInput {
+  userId: Types.ObjectId;
+  initialSetupDone: boolean;
 }
 
 const resolvers = {
@@ -79,6 +84,33 @@ const resolvers = {
           "INVALID_EMAIL_OR_PASSWORD"
         );
       }
+    },
+
+    async updateInitialSetupDoneForUser(
+      _: unknown,
+      {
+        input: { initialSetupDone },
+      }: { input: UpdateInitialSetupDoneForUserInput },
+      ctx: any
+    ): Promise<IUser> {
+      const loggedInUserId = getLoggedInUserId(ctx);
+      const userId = loggedInUserId?.userId;
+
+      if (!userId) {
+        throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { initialSetupDone },
+        { new: true }
+      ).populate("postMealPreferences");
+
+      if (!updatedUser) {
+        throw new ApolloError("User not found", "USER_NOT_FOUND");
+      }
+
+      return updatedUser as unknown as IUser;
     },
   },
   Query: {

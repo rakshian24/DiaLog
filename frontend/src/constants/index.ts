@@ -12,6 +12,7 @@ export const ROUTES = {
   REGISTER: "/",
   LOGIN: "/login",
   LOGOUT: "/logout",
+  SETUP: "/setup",
   DASHBOARD: "/dashboard",
   ADD_READING: "/add-reading",
   READING_HISTORY: "/reading-history",
