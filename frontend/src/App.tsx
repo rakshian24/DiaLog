@@ -10,11 +10,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/dashboard";
 import Profile from "./pages/profile";
 import { AppLayout } from "./components/AppLayout";
-import TransactionHistory from "./pages/transactionHistory";
-import Categories from "./pages/categories";
+import AddReading from "./pages/AddReading";
+import ReadingHistory from "./pages/ReadingHistory";
 import Reports from "./pages/reports";
 import Settings from "./pages/settings";
-import AddTransaction from "./pages/addTransaction";
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -40,15 +39,11 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+              <Route path={ROUTES.ADD_READING} element={<AddReading />} />
               <Route
-                path={ROUTES.ADD_TRANSACTION}
-                element={<AddTransaction />}
+                path={ROUTES.READING_HISTORY}
+                element={<ReadingHistory />}
               />
-              <Route
-                path={ROUTES.TRANSACTION_HISTORY}
-                element={<TransactionHistory />}
-              />
-              <Route path={ROUTES.CATEGORIES} element={<Categories />} />
               <Route path={ROUTES.REPORTS} element={<Reports />} />
               <Route path={ROUTES.SETTINGS} element={<Settings />} />
               <Route path={ROUTES.PROFILE} element={<Profile />} />

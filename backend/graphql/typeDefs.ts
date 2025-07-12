@@ -33,12 +33,21 @@ export const typeDefs = gql`
     AFTER_DINNER
   }
 
+  type PostMealTime {
+    _id: ID!
+    value: Int!
+    unit: TimeFrequency!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    userId: ID!
+  }
+
   type User {
     _id: ID!
     username: String!
     email: String!
     birthYear: String!
-    postMealPreferences: [ID]
+    postMealPreferences: [PostMealTime]
     gender: GenderType!
   }
 
@@ -76,15 +85,6 @@ export const typeDefs = gql`
     updatedAt: DateTime!
   }
 
-  type PostMealTime {
-    _id: ID!
-    value: Int!
-    unit: TimeFrequency!
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    userId: ID!
-  }
-
   type ExerciseDetail {
     exerciseId: ID
     durationMinutes: Int
@@ -109,7 +109,7 @@ export const typeDefs = gql`
     email: String!
     password: String!
     confirmPassword: String!
-    birthYear: String!
+    birthYear: Int!
     gender: GenderType!
   }
 

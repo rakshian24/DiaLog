@@ -21,7 +21,7 @@ export const AppLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const isCurrentPathAddTransaction = pathname === ROUTES.ADD_TRANSACTION;
+  const isCurrentPathAddTransaction = false;
 
   const { data, loading } = useQuery(GET_ME);
 

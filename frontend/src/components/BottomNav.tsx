@@ -45,15 +45,15 @@ export const BottomNav = () => {
           sx={BottomNavigationActionStyles}
         />
         <BottomNavigationAction
-          label="Add"
-          value={ROUTES.ADD_TRANSACTION}
-          icon={<AddIcon />}
+          label="History"
+          value={ROUTES.READING_HISTORY}
+          icon={<HistoryIcon />}
           sx={BottomNavigationActionStyles}
         />
         <BottomNavigationAction
-          label="History"
-          value={ROUTES.TRANSACTION_HISTORY}
-          icon={<HistoryIcon />}
+          label="Add"
+          value={ROUTES.ADD_READING}
+          icon={<AddIcon />}
           sx={BottomNavigationActionStyles}
         />
         <BottomNavigationAction

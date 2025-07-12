@@ -29,8 +29,7 @@ export const TopAppBar = () => {
   const currentPath = location.pathname;
   const currentMenu = menuItems.find((item) => item.path === currentPath);
   const currentPageTitle = currentMenu?.text || "Dashboard";
-  const isCurrentPathAddTransaction =
-    location.pathname === ROUTES.ADD_TRANSACTION;
+  const isCurrentPathAddTransaction = false;
 
   if (!isTablet) return null;
 

@@ -58,6 +58,7 @@ const userSchema = new Schema(
       {
         type: Types.ObjectId,
         ref: "PostMealTime",
+        default: [],
       },
     ],
     gender: {
