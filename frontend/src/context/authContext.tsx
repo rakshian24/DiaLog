@@ -7,13 +7,11 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { Account } from "../types";
 
 export interface User {
   userId: string;
   email: string;
   username: string;
-  accounts: Account[];
 }
 
 interface AuthContextProps {

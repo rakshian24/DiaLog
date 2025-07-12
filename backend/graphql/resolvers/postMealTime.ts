@@ -2,6 +2,7 @@ import { ApolloError } from "apollo-server-errors";
 import getLoggedInUserId from "../../middleware/getLoggedInUserId";
 import PostMealTime, { IPostMealTime } from "../../models/PostMealTime";
 import { TimeFrequency } from "../../models/PostMealTime";
+import User from "../../models/User";
 
 interface ExerciseInput {
   value: number;
@@ -39,6 +40,13 @@ const resolvers = {
         unit,
         userId: authenticatedUserId,
       });
+
+      // Update the user's postMealPreferences array
+      await User.findByIdAndUpdate(
+        authenticatedUserId,
+        { $push: { postMealPreferences: newPostMealTime._id } },
+        { new: true }
+      );
 
       const response =
         (await newPostMealTime.save()) as unknown as IPostMealTime;

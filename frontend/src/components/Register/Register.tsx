@@ -3,6 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 import {
   Backdrop,
   CircularProgress,
+  MenuItem,
+  SelectChangeEvent,
   Stack,
   Typography,
   useMediaQuery,
@@ -18,6 +20,8 @@ import { REGISTER_USER_MUTATION } from "../../graphql/mutations";
 import Button from "../CustomButton";
 import { NavigateNext } from "@mui/icons-material";
 import ErrorBox from "../ErrorBox";
+import CustomSelect from "../CustomSelect";
+import { GenderType } from "../../types";
 
 const Register = () => {
   const { storeTokenInLS, user } = useAuth();
@@ -37,6 +41,9 @@ const Register = () => {
   const { errors } = formState;
   const COMMON_PROPS = { control: control, errors: errors };
   const isFormDisabled = !formState.isValid;
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 
   useEffect(() => {
     if (user?.userId) {
@@ -93,6 +100,61 @@ const Register = () => {
                 />
               )}
             />
+            <Stack gap={3} direction={"row"} alignItems={"center"}>
+              <Controller
+                name="birthYear"
+                {...COMMON_PROPS}
+                rules={{
+                  required: true,
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <CustomSelect
+                    {...field}
+                    error={error !== undefined}
+                    styles={{ width: "100%" }}
+                    placeholder={"Select your birth year"}
+                    label={"Birth year"}
+                    defaultValue={field.value}
+                    onChange={(e: SelectChangeEvent<unknown>) => {
+                      field.onChange(e.target.value);
+                    }}
+                  >
+                    {years.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        {year}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
+
+              <Controller
+                name="gender"
+                {...COMMON_PROPS}
+                rules={{
+                  required: true,
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <CustomSelect
+                    {...field}
+                    error={error !== undefined}
+                    styles={{ width: "100%" }}
+                    placeholder={"Select your gender"}
+                    label={"Gender"}
+                    defaultValue={field.value}
+                    onChange={(e: SelectChangeEvent<unknown>) => {
+                      field.onChange(e.target.value);
+                    }}
+                  >
+                    {Object.values(GenderType).map((gender) => (
+                      <MenuItem key={gender} value={gender}>
+                        {gender === GenderType.male ? "Male" : "Female"}
+                      </MenuItem>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
+            </Stack>
             <Controller
               name="email"
               {...COMMON_PROPS}
@@ -161,6 +223,7 @@ const Register = () => {
                 />
               )}
             />
+
             <ErrorBox formState={formState} style={{ mb: 2 }} />
             <Stack
               display={"flex"}

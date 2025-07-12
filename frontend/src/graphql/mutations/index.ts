@@ -8,13 +8,16 @@ export const REGISTER_USER_MUTATION = gql`
         _id
         username
         email
-        accounts {
+        birthYear
+        postMealPreferences {
           _id
-          accountNumber
-          bankName
-          balance
           userId
+          updatedAt
+          unit
+          value
+          createdAt
         }
+        gender
       }
     }
   }
@@ -26,58 +29,18 @@ export const LOGIN_MUTATION = gql`
       token
       user {
         _id
-        email
         username
-        accounts {
+        email
+        birthYear
+        postMealPreferences {
           _id
-          accountNumber
-          bankName
-          balance
           userId
+          updatedAt
+          unit
+          value
+          createdAt
         }
-      }
-    }
-  }
-`;
-
-export const CREATE_ACCOUNT_MUTATION = gql`
-  mutation Mutation($input: AccountInput) {
-    createAccount(input: $input) {
-      _id
-      accountNumber
-      bankName
-      balance
-      userId
-    }
-  }
-`;
-
-export const CREATE_TRANSACTION = gql`
-  mutation Mutation($input: TransactionInput) {
-    createTransaction(input: $input) {
-      _id
-      userId
-      type
-      paymentMethod
-      amount
-      description
-      receiptImageUrl
-      date
-      category {
-        _id
-        name
-        icon
-        color
-        type
-        userId
-        description
-      }
-      account {
-        _id
-        accountNumber
-        bankName
-        balance
-        userId
+        gender
       }
     }
   }

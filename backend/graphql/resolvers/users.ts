@@ -49,6 +49,7 @@ const resolvers = {
         confirmPassword,
         birthYear,
         gender,
+        postMealPreferences: [],
       });
 
       const token = await generateToken(newUser);
@@ -63,7 +64,9 @@ const resolvers = {
       { input: { email, password } }: { input: LoginInput },
       ctx: any
     ): Promise<{ user: IUser; token: string }> {
-      const user = (await User.findOne({ email })) as IUser;
+      const user = (await User.findOne({ email }).populate(
+        "postMealPreferences"
+      )) as IUser;
 
       if (user && (await user.matchPassword(password))) {
         const token = await generateToken(user);
@@ -87,7 +90,9 @@ const resolvers = {
         throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
       }
 
-      const user = (await User.findById(userId)) as IUser;
+      const user = (await User.findById(userId).populate(
+        "postMealPreferences"
+      )) as IUser;
 
       return user;
     },

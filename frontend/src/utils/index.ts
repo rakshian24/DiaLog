@@ -1,5 +1,3 @@
-import { ExpenseCategory, IncomeCategory } from "../types";
-
 export const textInputRegex =
   /^(?!\s+$)[~!\s@#$%^&*()_+=[\]{}|;':",./<>?a-zA-Z0-9-]+$/;
 
@@ -41,31 +39,4 @@ export const capitalizeFirstLetter = (name: string = ""): string => {
   if (!name) return name;
 
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-};
-
-export const formatNumber = (
-  num: number,
-  isUSD: boolean,
-  showDecimals: boolean = true
-) => {
-  const options = showDecimals
-    ? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-    : {};
-
-  return new Intl.NumberFormat(isUSD ? "en-US" : "en-IN", options).format(num);
-};
-
-export const getCategoryName = (
-  selectedCategoryId: string,
-  isSelectedTypeIncome: boolean,
-  incomeCategories: IncomeCategory[] | [],
-  expenseCategories: ExpenseCategory[] | []
-) => {
-  if (isSelectedTypeIncome) {
-    return incomeCategories.find((cat) => cat._id === selectedCategoryId)?.name;
-  }
-
-  return expenseCategories.find(
-    ({ category }) => category._id === selectedCategoryId
-  )?.category.name;
 };
