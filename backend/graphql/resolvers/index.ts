@@ -3,6 +3,7 @@ import foodResolvers from "./food";
 import medicationResolvers from "./medication";
 import exerciseResolvers from "./exercise";
 import postMealTimeResolvers from "./postMealTime";
+import readingResolvers from "./reading";
 
 export default {
   Query: {
@@ -11,6 +12,7 @@ export default {
     ...medicationResolvers.Query,
     ...exerciseResolvers.Query,
     ...postMealTimeResolvers.Query,
+    ...readingResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -18,5 +20,6 @@ export default {
     ...medicationResolvers.Mutation,
     ...exerciseResolvers.Mutation,
     ...postMealTimeResolvers.Mutation,
+    ...readingResolvers.Mutation,
   },
 };
