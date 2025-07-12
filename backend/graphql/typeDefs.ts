@@ -19,6 +19,11 @@ export const typeDefs = gql`
     unit
   }
 
+  enum TimeFrequency {
+    hours
+    minutes
+  }
+
   enum ReadingTiming {
     BEFORE_BREAKFAST
     AFTER_BREAKFAST
@@ -43,7 +48,7 @@ export const typeDefs = gql`
   }
 
   type Food {
-    _id: String!
+    _id: ID!
     name: String!
     userId: ID!
     createdAt: DateTime!
@@ -51,13 +56,30 @@ export const typeDefs = gql`
   }
 
   type Medication {
-    _id: String
+    _id: ID!
     name: String!
     type: MedicationType!
     dosage: Int!
     dosageType: MedicationDosageType!
     timeTaken: String!
     readingTime: ReadingTiming!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    userId: ID!
+  }
+
+  type Exercise {
+    _id: ID!
+    type: String!
+    userId: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
+  type PostMealTime {
+    _id: ID!
+    value: Int!
+    unit: TimeFrequency!
     createdAt: DateTime!
     updatedAt: DateTime!
     userId: ID!
@@ -90,11 +112,26 @@ export const typeDefs = gql`
     readingTime: ReadingTiming!
   }
 
+  input ExerciseInput {
+    type: String!
+  }
+
+  input PostMealTimeInput {
+    value: Int!
+    unit: TimeFrequency!
+  }
+
   type Query {
     me: User
+
     getAllFoods: [Food]
+
     getMedicationById(id: ID!): Medication
     getAllMedications: [Medication]
+
+    getAllExercises: [Exercise]
+
+    getAllPostMealTimes: [PostMealTime]
   }
 
   type Mutation {
@@ -103,5 +140,7 @@ export const typeDefs = gql`
 
     createFood(input: FoodInput): Food
     addMedication(input: MedicationInput): Medication
+    addExercise(input: ExerciseInput): Exercise
+    addPostMealTime(input: PostMealTimeInput): PostMealTime
   }
 `;
