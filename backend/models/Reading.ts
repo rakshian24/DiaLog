@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import Medication from "./Medication";
-import { ReadingTiming } from "../types";
+import { IExerciseDetail, ReadingTiming } from "../types";
 
 export interface IReading extends Document {
   userId: Types.ObjectId;
@@ -9,7 +9,7 @@ export interface IReading extends Document {
   readingTime: ReadingTiming;
   foods?: Types.ObjectId[];
   exercisedToday?: boolean;
-  exerciseDetails?: Types.ObjectId[];
+  exerciseDetails?: IExerciseDetail[];
   medications?: Types.ObjectId[];
 }
 
@@ -36,9 +36,8 @@ const readingSchema = new Schema(
     },
     exerciseDetails: [
       {
-        type: Types.ObjectId,
-        ref: "Exercise",
-        required: false,
+        exerciseId: { type: Types.ObjectId, ref: "Exercise", required: true },
+        durationMinutes: { type: Number, required: true },
       },
     ],
     medications: [

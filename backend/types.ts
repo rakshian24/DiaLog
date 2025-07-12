@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export enum ReadingTiming {
   BEFORE_BREAKFAST = "BEFORE_BREAKFAST",
   AFTER_BREAKFAST = "AFTER_BREAKFAST",
@@ -5,4 +7,9 @@ export enum ReadingTiming {
   AFTER_LUNCH = "AFTER_LUNCH",
   BEFORE_DINNER = "BEFORE_DINNER",
   AFTER_DINNER = "AFTER_DINNER",
+}
+
+export interface IExerciseDetail {
+  exerciseId: Types.ObjectId;
+  durationMinutes: number;
 }
