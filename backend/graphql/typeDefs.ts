@@ -85,6 +85,25 @@ export const typeDefs = gql`
     userId: ID!
   }
 
+  type ExerciseDetail {
+    exerciseId: ID
+    durationMinutes: Int
+  }
+
+  type Reading {
+    _id: ID!
+    userId: ID!
+    dateTime: String!
+    glucoseLevel: Int!
+    readingTime: ReadingTiming!
+    foods: [ID]
+    exercisedToday: Boolean!
+    exerciseDetails: [ExerciseDetail]
+    medications: [ID]
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -121,6 +140,21 @@ export const typeDefs = gql`
     unit: TimeFrequency!
   }
 
+  input ExerciseDetailInput {
+    exerciseId: ID!
+    durationMinutes: Int!
+  }
+
+  input ReadingInput {
+    dateTime: String!
+    glucoseLevel: Int!
+    readingTime: ReadingTiming!
+    foods: [ID]
+    exercisedToday: Boolean
+    exerciseDetails: ExerciseDetailInput
+    medications: [ID]
+  }
+
   type Query {
     me: User
 
@@ -132,6 +166,9 @@ export const typeDefs = gql`
     getAllExercises: [Exercise]
 
     getAllPostMealTimes: [PostMealTime]
+
+    getReadingById(id: ID!): Reading
+    getAllReadings: [Reading]
   }
 
   type Mutation {
@@ -142,5 +179,6 @@ export const typeDefs = gql`
     addMedication(input: MedicationInput): Medication
     addExercise(input: ExerciseInput): Exercise
     addPostMealTime(input: PostMealTimeInput): PostMealTime
+    addReading(input: ReadingInput): Reading
   }
 `;

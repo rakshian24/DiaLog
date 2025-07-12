@@ -16,7 +16,7 @@ export interface IReading extends Document {
 const readingSchema = new Schema(
   {
     userId: { type: Types.ObjectId, ref: "User", required: true },
-    dateTime: { type: String, required: true },
+    dateTime: { type: Date, required: true },
     glucoseLevel: { type: Number, required: true },
     readingTime: {
       type: String,
@@ -56,7 +56,28 @@ const readingSchema = new Schema(
 readingSchema.pre("validate", async function (next) {
   const reading = this;
 
-  // 1. Validate food for after-meal
+  // 1. Restrict duplicate readingTime for same user & day
+  const readingDate = new Date(reading.dateTime).toISOString().split("T")[0]; // Get just YYYY-MM-DD
+
+  const existing = await Reading.findOne({
+    userId: reading.userId,
+    readingTime: reading.readingTime,
+    dateTime: {
+      $gte: new Date(`${readingDate}T00:00:00.000Z`),
+      $lte: new Date(`${readingDate}T23:59:59.999Z`),
+    },
+    _id: { $ne: reading._id }, // Exclude current if updating
+  });
+
+  if (existing) {
+    return next(
+      new Error(
+        `You already have a "${reading.readingTime}" reading for this day.`
+      )
+    );
+  }
+
+  // 2. Validate food for after-meal
   const isAfterMeal =
     reading.readingTime === ReadingTiming.AFTER_BREAKFAST ||
     reading.readingTime === ReadingTiming.AFTER_LUNCH ||
@@ -69,7 +90,7 @@ readingSchema.pre("validate", async function (next) {
     );
   }
 
-  // 2. Validate exercise details if exercisedToday is true
+  // 3. Validate exercise details if exercisedToday is true
   if (
     reading.exercisedToday === true &&
     (!reading.exerciseDetails || reading.exerciseDetails.length === 0)
@@ -80,7 +101,7 @@ readingSchema.pre("validate", async function (next) {
     );
   }
 
-  // 3. Medication Validation
+  // 4. Medication Validation
   try {
     const requiredMeds = await Medication.find({
       readingTime: reading.readingTime,
