@@ -1,5 +1,5 @@
-import mongoose, { Document, Schema } from "mongoose";
-import { ReadingTiming } from "./Reading";
+import mongoose, { Document, Schema, Types } from "mongoose";
+import { ReadingTiming } from "../types";
 
 export enum MedicationType {
   tablet = "tablet",
@@ -12,25 +12,34 @@ export enum MedicationDosageType {
 }
 
 export interface IMedication extends Document {
+  userId: Types.ObjectId;
   name: string;
   type: MedicationType;
-  dosage: MedicationDosageType;
+  dosage: number;
+  dosageType: MedicationDosageType;
   timeTaken: string;
   readingTime: ReadingTiming;
 }
 
 const medicationSchema = new Schema(
   {
+    userId: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: [true, "User ID is required for medication"],
+    },
     name: {
       type: String,
       required: [true, "Medication name is required!"],
+      trim: true,
     },
     type: {
       type: String,
       enum: Object.values(MedicationType),
       required: [true, "Medication type is required!"],
     },
-    dosage: {
+    dosage: { type: Number, required: true },
+    dosageType: {
       type: String,
       enum: Object.values(MedicationDosageType),
       required: [true, "Medication doasge type is required!"],
@@ -49,6 +58,9 @@ const medicationSchema = new Schema(
     timestamps: true,
   }
 );
+
+// Enforce unique medication name per user and type
+medicationSchema.index({ userId: 1, name: 1 }, { unique: true });
 
 const Medication = mongoose.model("Medication", medicationSchema);
 

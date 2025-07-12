@@ -1,14 +1,6 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import Medication from "./Medication";
-
-export enum ReadingTiming {
-  BeforeBreakfast = "Before Breakfast",
-  AfterBreakfast = "After Breakfast",
-  BeforeLunch = "Before Lunch",
-  AfterLunch = "After Lunch",
-  BeforeDinner = "Before Dinner",
-  AfterDinner = "After Dinner",
-}
+import { ReadingTiming } from "../types";
 
 export interface IReading extends Document {
   userId: Types.ObjectId;
@@ -67,9 +59,9 @@ readingSchema.pre("validate", async function (next) {
 
   // 1. Validate food for after-meal
   const isAfterMeal =
-    reading.readingTime === ReadingTiming.AfterBreakfast ||
-    reading.readingTime === ReadingTiming.AfterLunch ||
-    reading.readingTime === ReadingTiming.AfterDinner;
+    reading.readingTime === ReadingTiming.AFTER_BREAKFAST ||
+    reading.readingTime === ReadingTiming.AFTER_LUNCH ||
+    reading.readingTime === ReadingTiming.AFTER_DINNER;
 
   if (isAfterMeal && (!reading.foods || reading.foods.length === 0)) {
     reading.invalidate(
@@ -104,7 +96,8 @@ readingSchema.pre("validate", async function (next) {
         `Medication(s) are required for "${reading.readingTime}" reading based on your prescribed plan`
       );
     }
-  } catch (err) {
+    next();
+  } catch (err: any) {
     return next(err);
   }
 
