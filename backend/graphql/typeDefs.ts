@@ -49,6 +49,7 @@ export const typeDefs = gql`
     birthYear: String!
     postMealPreferences: [PostMealTime]
     gender: GenderType!
+    initialSetupDone: Boolean!
   }
 
   type AuthResponse {
@@ -155,6 +156,11 @@ export const typeDefs = gql`
     medications: [ID]
   }
 
+  input UpdateInitialSetupDoneForUserInput {
+    userId: ID!
+    initialSetupDone: Boolean!
+  }
+
   type Query {
     me: User
 
@@ -180,5 +186,9 @@ export const typeDefs = gql`
     addExercise(input: ExerciseInput): Exercise
     addPostMealTime(input: PostMealTimeInput): PostMealTime
     addReading(input: ReadingInput): Reading
+
+    updateInitialSetupDoneForUser(
+      input: UpdateInitialSetupDoneForUserInput
+    ): User
   }
 `;

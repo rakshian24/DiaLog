@@ -16,6 +16,7 @@ export interface IUser extends Document {
   postMealPreferences?: Types.ObjectId[];
   gender: GenderType;
   matchPassword: (enteredPassword: string) => Promise<boolean>;
+  initialSetupDone?: boolean;
 }
 
 const userSchema = new Schema(
@@ -65,6 +66,10 @@ const userSchema = new Schema(
       type: String,
       enum: Object.values(GenderType),
       required: [true, "Gender type is required!"],
+    },
+    initialSetupDone: {
+      type: Boolean,
+      default: false,
     },
   },
   {

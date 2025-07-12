@@ -14,6 +14,7 @@ import AddReading from "./pages/AddReading";
 import ReadingHistory from "./pages/ReadingHistory";
 import Reports from "./pages/reports";
 import Settings from "./pages/settings";
+import InitSetup from "./pages/Setup";
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -44,6 +45,7 @@ function App() {
                 path={ROUTES.READING_HISTORY}
                 element={<ReadingHistory />}
               />
+              <Route path={ROUTES.SETUP} element={<InitSetup />} />
               <Route path={ROUTES.REPORTS} element={<Reports />} />
               <Route path={ROUTES.SETTINGS} element={<Settings />} />
               <Route path={ROUTES.PROFILE} element={<Profile />} />

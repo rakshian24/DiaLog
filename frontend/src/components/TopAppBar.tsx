@@ -14,10 +14,10 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { screenSize, colors, APP_NAME, ROUTES } from "../constants";
+import { screenSize, colors, APP_NAME } from "../constants";
 import logo from "../assets/pngs/logo.png";
 import useMenuItemsList from "../hooks/useMenuItems";
-import { Close } from "@mui/icons-material";
+import ProfileAvatar from "./ProfileAvatar";
 
 export const TopAppBar = () => {
   const menuItems = useMenuItemsList();
@@ -28,8 +28,7 @@ export const TopAppBar = () => {
 
   const currentPath = location.pathname;
   const currentMenu = menuItems.find((item) => item.path === currentPath);
-  const currentPageTitle = currentMenu?.text || "Dashboard";
-  const isCurrentPathAddTransaction = false;
+  const currentPageTitle = currentMenu?.text || "Initial setup";
 
   if (!isTablet) return null;
 
@@ -52,13 +51,7 @@ export const TopAppBar = () => {
           <Typography fontWeight={600} sx={{ color: colors.lightGreen }}>
             {currentPageTitle}
           </Typography>
-          {isCurrentPathAddTransaction ? (
-            <IconButton onClick={() => navigate(ROUTES.DASHBOARD)}>
-              <Close />
-            </IconButton>
-          ) : (
-            <Box width={"24px"} />
-          )}
+          <ProfileAvatar />
         </Toolbar>
       </AppBar>
 

@@ -5,7 +5,7 @@ import {
   Stack,
   useMediaQuery,
 } from "@mui/material";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LeftNav } from "../components/LeftNav";
 import { colors, ROUTES, screenSize } from "../constants";
 import { TopAppBar } from "./TopAppBar";
@@ -19,19 +19,18 @@ export const AppLayout = () => {
   const isPcAndAbove = useMediaQuery(`(max-width:${screenSize.pc})`);
 
   const navigate = useNavigate();
-  const { pathname } = useLocation();
 
   const isCurrentPathAddTransaction = false;
 
   const { data, loading } = useQuery(GET_ME);
 
-  const hasAccount = !!data?.me?.accounts?.length;
+  const hasInitialSetupDone = data?.me?.initialSetupDone;
 
   useEffect(() => {
-    if (!hasAccount) {
-      navigate(ROUTES.DASHBOARD);
+    if (!hasInitialSetupDone) {
+      navigate(ROUTES.SETUP);
     }
-  }, [hasAccount, navigate]);
+  }, [hasInitialSetupDone, navigate]);
 
   if (loading) {
     return (
