@@ -92,7 +92,7 @@ const TagInput: React.FC<TagInputProps> = ({
                   deleteIcon={<CloseOutlined />}
                   sx={{
                     margin: "2px 0",
-                    bgcolor: colors.lightBrown,
+                    bgcolor: colors.primaryBg,
                     color: colors.white,
                     fontWeight: "500",
                   }}

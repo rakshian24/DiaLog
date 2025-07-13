@@ -27,6 +27,7 @@ const Register = () => {
   const { storeTokenInLS, user } = useAuth();
   const navigate = useNavigate();
   const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
+  const isMobile = useMediaQuery(`(max-width:${screenSize.mobile})`);
 
   const [registerUser, { loading }] = useMutation(REGISTER_USER_MUTATION);
 
@@ -100,7 +101,11 @@ const Register = () => {
                 />
               )}
             />
-            <Stack gap={3} direction={"row"} alignItems={"center"}>
+            <Stack
+              gap={3}
+              direction={isMobile ? "column" : "row"}
+              alignItems={"center"}
+            >
               <Controller
                 name="birthYear"
                 {...COMMON_PROPS}
@@ -240,7 +245,7 @@ const Register = () => {
                   style={{
                     marginLeft: "4px",
                     fontWeight: 500,
-                    color: colors.lightGreen,
+                    color: colors.primary,
                   }}
                 >
                   Sign In

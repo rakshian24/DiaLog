@@ -1,4 +1,5 @@
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
+import { IUser } from "./models/User";
 
 export enum ReadingTiming {
   BEFORE_BREAKFAST = "BEFORE_BREAKFAST",
@@ -13,3 +14,12 @@ export interface IExerciseDetail {
   exerciseId: Types.ObjectId;
   durationMinutes: number;
 }
+
+export enum SetupSteps {
+  TRACKING_PREFERENCES = "trackingPreferences",
+  MEDICATIONS = "medications",
+}
+
+export type IUserLean = Omit<IUser, keyof Document> & {
+  _id: Types.ObjectId;
+};

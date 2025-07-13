@@ -3,6 +3,14 @@ import User, { GenderType, IUser } from "../../models/User";
 import getLoggedInUserId from "../../middleware/getLoggedInUserId";
 import { generateToken } from "../../utils";
 import { Types } from "mongoose";
+import UserSetupProgress, {
+  IUserSetupProgress,
+} from "../../models/UserSetupProgress";
+import { IUserLean } from "../../types";
+
+interface IUserWithSetupProgress extends IUserLean {
+  setupProgressDetails?: IUserSetupProgress | null;
+}
 
 interface RegisterInput {
   username: string;
@@ -37,7 +45,7 @@ const resolvers = {
         },
       }: { input: RegisterInput },
       ctx: any
-    ): Promise<{ user: IUser; token: string }> {
+    ): Promise<{ user: IUserWithSetupProgress; token: string }> {
       const userExists = await User.findOne({ email });
 
       if (userExists) {
@@ -59,31 +67,54 @@ const resolvers = {
 
       const token = await generateToken(newUser);
       const res = (await newUser.save()) as unknown as IUser;
-      const response = { user: res, token };
 
-      return response;
+      // Create setup progress for new user
+      const setupProgress = await UserSetupProgress.create({
+        userId: res._id,
+      });
+
+      return {
+        user: {
+          ...(res.toObject() as IUserLean),
+          setupProgressDetails: setupProgress,
+        },
+        token,
+      };
     },
 
     async loginUser(
       _: unknown,
       { input: { email, password } }: { input: LoginInput },
       ctx: any
-    ): Promise<{ user: IUser; token: string }> {
-      const user = (await User.findOne({ email }).populate(
+    ): Promise<{ user: IUserWithSetupProgress; token: string }> {
+      const userDoc = (await User.findOne({ email }).populate(
         "postMealPreferences"
       )) as IUser;
 
-      if (user && (await user.matchPassword(password))) {
-        const token = await generateToken(user);
-        const response = { user, token };
-
-        return response;
-      } else {
+      if (!userDoc || !(await userDoc.matchPassword(password))) {
         throw new ApolloError(
           `Invalid email or password`,
           "INVALID_EMAIL_OR_PASSWORD"
         );
       }
+
+      const token = await generateToken(userDoc);
+
+      // Convert to plain object (lean) version
+      const userObject = userDoc.toObject();
+
+      // Fetch setup progress
+      const setupProgress = await UserSetupProgress.findOne({
+        userId: userDoc._id,
+      });
+
+      return {
+        user: {
+          ...(userObject as IUserLean),
+          setupProgressDetails: setupProgress,
+        },
+        token,
+      };
     },
 
     async updateInitialSetupDoneForUser(
@@ -114,7 +145,11 @@ const resolvers = {
     },
   },
   Query: {
-    async me(_: unknown, args: {}, ctx: any): Promise<IUser | null> {
+    async me(
+      _: unknown,
+      args: {},
+      ctx: any
+    ): Promise<IUserWithSetupProgress | null> {
       const loggedInUserId = getLoggedInUserId(ctx);
       const userId = loggedInUserId?.userId;
 
@@ -126,7 +161,12 @@ const resolvers = {
         "postMealPreferences"
       )) as IUser;
 
-      return user;
+      const setupProgress = await UserSetupProgress.findOne({ userId });
+
+      return {
+        ...user.toObject(),
+        setupProgressDetails: setupProgress,
+      };
     },
   },
 };

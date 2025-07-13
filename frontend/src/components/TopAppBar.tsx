@@ -18,6 +18,7 @@ import { screenSize, colors, APP_NAME } from "../constants";
 import logo from "../assets/pngs/logo.png";
 import useMenuItemsList from "../hooks/useMenuItems";
 import ProfileAvatar from "./ProfileAvatar";
+import { useTopToolbarContent } from "../hooks/useTopToolbarContent";
 
 export const TopAppBar = () => {
   const menuItems = useMenuItemsList();
@@ -26,9 +27,13 @@ export const TopAppBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { leftContent, centerContent, rightContent } = useTopToolbarContent({
+    onMenuClick: () => setDrawerOpen(true),
+    onFilterClick: () => console.log("Filter clicked"),
+    onSearchClick: () => console.log("Search clicked"),
+  });
+
   const currentPath = location.pathname;
-  const currentMenu = menuItems.find((item) => item.path === currentPath);
-  const currentPageTitle = currentMenu?.text || "Initial setup";
 
   if (!isTablet) return null;
 
@@ -41,17 +46,13 @@ export const TopAppBar = () => {
           color: colors.black,
           boxShadow: "0 1px 0px rgba(0, 0, 0, 0.1)",
           zIndex: 100000,
-          borderBottom: `1px solid ${colors.grey1}`,
+          borderBottom: `1px solid ${colors.grey1Bg}`,
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <IconButton onClick={() => setDrawerOpen(true)}>
-            <MenuIcon sx={{ color: colors.lightGreen }} />
-          </IconButton>
-          <Typography fontWeight={600} sx={{ color: colors.lightGreen }}>
-            {currentPageTitle}
-          </Typography>
-          <ProfileAvatar />
+          {leftContent}
+          {centerContent}
+          {rightContent ?? <ProfileAvatar />}
         </Toolbar>
       </AppBar>
 

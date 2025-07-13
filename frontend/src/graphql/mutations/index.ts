@@ -47,3 +47,28 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+export const ADD_POST_MEAL_TIME_MUTATION = gql`
+  mutation Mutation($input: [PostMealTimeInput]) {
+    addPostMealTime(input: $input) {
+      _id
+      value
+      unit
+      createdAt
+      updatedAt
+      userId
+    }
+  }
+`;
+
+export const UPDATE_SETUP_PROGRESS = gql`
+  mutation Mutation($input: UpdateUserSetupProgressInput!) {
+    updateUserSetupProgress(input: $input) {
+      userId
+      progress
+      completedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;

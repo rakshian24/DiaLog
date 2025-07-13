@@ -14,8 +14,8 @@ export const BottomNav = () => {
 
   const BottomNavigationActionStyles = {
     "&.Mui-selected": {
-      color: colors.lightGreen,
-      borderTop: `3px solid ${colors.lightGreen}`,
+      color: colors.primary,
+      borderTop: `3px solid ${colors.primary}`,
       mt: "-3px",
     },
   };
