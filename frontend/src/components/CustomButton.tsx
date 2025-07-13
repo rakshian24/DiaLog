@@ -12,7 +12,7 @@ export type ButtonProps = LoadingButtonProps & {
   startIcon?: ReactElement;
   endIcon?: ReactElement;
   dataTestId?: string;
-  priority?: "primary" | "secondary" | "tertiary";
+  priority?: "primary" | "secondary" | "tertiary" | "success";
 };
 
 const Button = ({
@@ -47,8 +47,18 @@ const Button = ({
           ? "10px 24px 10px 16px"
           : "10px 24px",
         boxShadow: "none",
-        bgcolor: priority === "primary" ? colors.primary : colors.white,
-        color: priority === "primary" ? colors.white : colors.primary,
+        bgcolor:
+          priority === "primary"
+            ? colors.primary
+            : priority === "success"
+            ? colors.green
+            : colors.white,
+        color:
+          priority === "primary"
+            ? colors.white
+            : priority === "success"
+            ? colors.white
+            : colors.primary,
         border:
           priority === "secondary" ? `1px solid ${colors.primary}` : "none",
         "&:hover": {
@@ -57,10 +67,12 @@ const Button = ({
               ? colors.primary
               : priority === "secondary"
               ? colors.lightGrey2
+              : priority === "success"
+              ? colors.greenHover
               : colors.primary,
           boxShadow: "none",
           color:
-            priority === "primary"
+            priority === "primary" || "success"
               ? colors.white
               : priority === "secondary"
               ? colors.primary

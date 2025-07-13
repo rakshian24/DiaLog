@@ -86,3 +86,17 @@ export const createPmtMutationPayload = (
     },
   ];
 };
+
+export const readingTimingLabels: Record<string, string> = {
+  BEFORE_BREAKFAST: "Before breakfast",
+  AFTER_BREAKFAST: "After breakfast",
+  BEFORE_LUNCH: "Before lunch",
+  AFTER_LUNCH: "After lunch",
+  BEFORE_DINNER: "Before dinner",
+  AFTER_DINNER: "After dinner",
+};
+
+export const medicationTypeLabels: Record<string, string> = {
+  tablet: "Tablet",
+  insulin: "Insulin",
+};

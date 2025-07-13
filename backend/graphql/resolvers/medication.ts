@@ -11,10 +11,10 @@ import { ReadingTiming } from "../../types";
 interface MedicationInput {
   name: string;
   type: MedicationType;
-  dosage: number;
+  dosage: string;
   dosageType: MedicationDosageType;
-  timeTaken: string;
-  readingTime: ReadingTiming;
+  timeTaken?: string;
+  readingTime: ReadingTiming[];
 }
 
 const resolvers = {
@@ -100,7 +100,9 @@ const resolvers = {
         throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
       }
 
-      const medications = await Medication.find({ userId });
+      const medications = await Medication.find({ userId }).sort({
+        createdAt: -1,
+      });
 
       return medications as unknown as IMedication[];
     },

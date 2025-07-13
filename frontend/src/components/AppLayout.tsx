@@ -33,8 +33,6 @@ export const AppLayout = () => {
   useEffect(() => {
     if (!hasUserCompletedOnboarding) {
       navigate(ROUTES.ONBOARDING);
-    } else {
-      navigate(ROUTES.DASHBOARD);
     }
   }, [hasUserCompletedOnboarding, navigate]);
 
@@ -65,9 +63,12 @@ export const AppLayout = () => {
           flexGrow: 1,
           bgcolor: colors.lightGrey1,
           p: isTablet ? 2 : 3,
-          height: !isTablet ? "calc(100vh - 120px)" : "100vh",
+          height:
+            !isTablet && !isCurrentPathNameOnboarding
+              ? "calc(100vh - 120px)"
+              : "100vh",
           overflowY: "auto",
-          mb: isTablet ? "56px" : "0px",
+          mb: isTablet && !isCurrentPathNameOnboarding ? "56px" : "0px",
         }}
       >
         <Stack

@@ -8,17 +8,17 @@ export enum MedicationType {
 
 export enum MedicationDosageType {
   mg = "mg",
-  unit = "unit",
+  unit = "units",
 }
 
 export interface IMedication extends Document {
   userId: Types.ObjectId;
   name: string;
   type: MedicationType;
-  dosage: number;
+  dosage: string;
   dosageType: MedicationDosageType;
-  timeTaken: string;
-  readingTime: ReadingTiming;
+  timeTaken?: string;
+  readingTime: ReadingTiming[];
 }
 
 const medicationSchema = new Schema(
@@ -38,7 +38,7 @@ const medicationSchema = new Schema(
       enum: Object.values(MedicationType),
       required: [true, "Medication type is required!"],
     },
-    dosage: { type: Number, required: true },
+    dosage: { type: String, required: true },
     dosageType: {
       type: String,
       enum: Object.values(MedicationDosageType),
@@ -46,12 +46,17 @@ const medicationSchema = new Schema(
     },
     timeTaken: {
       type: String,
-      required: [true, "Medication time is required!"],
     },
     readingTime: {
-      type: String,
+      type: [String],
       enum: Object.values(ReadingTiming),
-      required: [true, "Medication timing type is required!"],
+      required: [true, "At least one reading time is required!"],
+      validate: {
+        validator: function (value: string[]) {
+          return Array.isArray(value) && value.length > 0;
+        },
+        message: "You must specify at least one reading time.",
+      },
     },
   },
   {
