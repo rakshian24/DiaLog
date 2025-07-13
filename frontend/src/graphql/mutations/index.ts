@@ -72,3 +72,20 @@ export const UPDATE_SETUP_PROGRESS = gql`
     }
   }
 `;
+
+export const ADD_MEDICATION = gql`
+  mutation Mutation($input: MedicationInput) {
+    addMedication(input: $input) {
+      _id
+      name
+      type
+      dosage
+      timeTaken
+      readingTime
+      createdAt
+      updatedAt
+      userId
+      dosageType
+    }
+  }
+`;

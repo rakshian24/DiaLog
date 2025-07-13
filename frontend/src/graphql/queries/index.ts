@@ -32,3 +32,20 @@ export const GET_USER_SETUP_PROGRESS = gql`
     }
   }
 `;
+
+export const GET_ALL_MEDICATIONS = gql`
+  query GetAllMedications {
+    getAllMedications {
+      _id
+      name
+      type
+      dosage
+      dosageType
+      timeTaken
+      readingTime
+      createdAt
+      updatedAt
+      userId
+    }
+  }
+`;

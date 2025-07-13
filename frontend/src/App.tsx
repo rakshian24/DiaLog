@@ -15,6 +15,7 @@ import ReadingHistory from "./pages/ReadingHistory";
 import Reports from "./pages/reports";
 import Settings from "./pages/settings";
 import InitSetup from "./pages/Setup";
+import AddMedication from "./pages/AddMedication";
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -41,6 +42,7 @@ function App() {
             <Route element={<AppLayout />}>
               <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
               <Route path={ROUTES.ADD_READING} element={<AddReading />} />
+              <Route path={ROUTES.ADD_MEDICATION} element={<AddMedication />} />
               <Route
                 path={ROUTES.READING_HISTORY}
                 element={<ReadingHistory />}

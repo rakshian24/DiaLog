@@ -17,7 +17,7 @@ export const typeDefs = gql`
 
   enum MedicationDosageType {
     mg
-    unit
+    units
   }
 
   enum TimeFrequency {
@@ -84,10 +84,10 @@ export const typeDefs = gql`
     _id: ID!
     name: String!
     type: MedicationType!
-    dosage: Int!
+    dosage: String!
     dosageType: MedicationDosageType!
     timeTaken: String!
-    readingTime: ReadingTiming!
+    readingTime: [ReadingTiming!]!
     createdAt: DateTime!
     updatedAt: DateTime!
     userId: ID!
@@ -141,10 +141,10 @@ export const typeDefs = gql`
   input MedicationInput {
     name: String!
     type: MedicationType!
-    dosage: Int!
+    dosage: String!
     dosageType: MedicationDosageType!
-    timeTaken: String!
-    readingTime: ReadingTiming!
+    timeTaken: String
+    readingTime: [ReadingTiming!]!
   }
 
   input ExerciseInput {
