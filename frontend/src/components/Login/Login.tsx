@@ -124,7 +124,7 @@ const Login = () => {
                   style={{
                     marginLeft: "4px",
                     fontWeight: 500,
-                    color: colors.lightGreen,
+                    color: colors.primary,
                   }}
                 >
                   Register here

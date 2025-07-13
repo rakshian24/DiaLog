@@ -56,7 +56,7 @@ const CustomSelect = React.forwardRef<HTMLElement, Props>(function CustomSelect(
           fontSize: "1rem",
           borderRadius: 4,
           border: 0,
-          backgroundColor: error ? colors.lightRed : colors.grey,
+          backgroundColor: error ? colors.lightRed : colors.grey3,
           ...(error && { color: colors.red }),
           "& .MuiSelect-select .notranslate::after": placeholder
             ? {

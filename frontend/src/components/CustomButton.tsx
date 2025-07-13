@@ -54,16 +54,16 @@ const Button = ({
         "&:hover": {
           bgcolor:
             priority === "primary"
-              ? colors.lightGreen
+              ? colors.primary
               : priority === "secondary"
-              ? colors.lightGrey
+              ? colors.lightGrey2
               : colors.primary,
           boxShadow: "none",
           color:
             priority === "primary"
               ? colors.white
               : priority === "secondary"
-              ? colors.lightGreen
+              ? colors.primary
               : colors.white,
         },
         "&:disabled": {

@@ -17,6 +17,7 @@ export interface IUser extends Document {
   gender: GenderType;
   matchPassword: (enteredPassword: string) => Promise<boolean>;
   initialSetupDone?: boolean;
+  setupProgress?: Record<string, boolean>;
 }
 
 const userSchema = new Schema(
@@ -70,6 +71,11 @@ const userSchema = new Schema(
     initialSetupDone: {
       type: Boolean,
       default: false,
+    },
+    setupProgress: {
+      type: Map,
+      of: Boolean,
+      default: {},
     },
   },
   {

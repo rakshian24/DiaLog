@@ -45,7 +45,7 @@ function App() {
                 path={ROUTES.READING_HISTORY}
                 element={<ReadingHistory />}
               />
-              <Route path={ROUTES.SETUP} element={<InitSetup />} />
+              <Route path={ROUTES.ONBOARDING} element={<InitSetup />} />
               <Route path={ROUTES.REPORTS} element={<Reports />} />
               <Route path={ROUTES.SETTINGS} element={<Settings />} />
               <Route path={ROUTES.PROFILE} element={<Profile />} />

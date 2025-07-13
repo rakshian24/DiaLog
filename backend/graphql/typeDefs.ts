@@ -3,6 +3,7 @@ import { gql } from "graphql-tag";
 export const typeDefs = gql`
   scalar DateTime
   scalar IntOrString
+  scalar JSON
 
   enum GenderType {
     male
@@ -33,6 +34,19 @@ export const typeDefs = gql`
     AFTER_DINNER
   }
 
+  enum SetupSteps {
+    trackingPreferences
+    medications
+  }
+
+  type UserSetupProgress {
+    userId: ID!
+    progress: JSON
+    completedAt: DateTime
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   type PostMealTime {
     _id: ID!
     value: Int!
@@ -50,6 +64,7 @@ export const typeDefs = gql`
     postMealPreferences: [PostMealTime]
     gender: GenderType!
     initialSetupDone: Boolean!
+    setupProgressDetails: UserSetupProgress
   }
 
   type AuthResponse {
@@ -161,6 +176,11 @@ export const typeDefs = gql`
     initialSetupDone: Boolean!
   }
 
+  input UpdateUserSetupProgressInput {
+    step: SetupSteps!
+    isProgressComplete: Boolean!
+  }
+
   type Query {
     me: User
 
@@ -175,6 +195,8 @@ export const typeDefs = gql`
 
     getReadingById(id: ID!): Reading
     getAllReadings: [Reading]
+
+    getUserSetupProgress: UserSetupProgress
   }
 
   type Mutation {
@@ -184,11 +206,15 @@ export const typeDefs = gql`
     createFood(input: FoodInput): Food
     addMedication(input: MedicationInput): Medication
     addExercise(input: ExerciseInput): Exercise
-    addPostMealTime(input: PostMealTimeInput): PostMealTime
+    addPostMealTime(input: [PostMealTimeInput]): [PostMealTime]
     addReading(input: ReadingInput): Reading
 
     updateInitialSetupDoneForUser(
       input: UpdateInitialSetupDoneForUserInput
     ): User
+
+    updateUserSetupProgress(
+      input: UpdateUserSetupProgressInput!
+    ): UserSetupProgress
   }
 `;

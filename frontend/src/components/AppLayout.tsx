@@ -5,13 +5,13 @@ import {
   Stack,
   useMediaQuery,
 } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { LeftNav } from "../components/LeftNav";
 import { colors, ROUTES, screenSize } from "../constants";
 import { TopAppBar } from "./TopAppBar";
 import { BottomNav } from "./BottomNav";
 import { useQuery } from "@apollo/client";
-import { GET_ME } from "../graphql/queries";
+import { GET_USER_SETUP_PROGRESS } from "../graphql/queries";
 import { useEffect } from "react";
 
 export const AppLayout = () => {
@@ -19,25 +19,28 @@ export const AppLayout = () => {
   const isPcAndAbove = useMediaQuery(`(max-width:${screenSize.pc})`);
 
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  const isCurrentPathAddTransaction = false;
+  const isCurrentPathNameOnboarding = pathname === ROUTES.ONBOARDING;
 
-  const { data, loading } = useQuery(GET_ME);
+  const { data: setupProgressData, loading: isSetupProgressDataLoading } =
+    useQuery(GET_USER_SETUP_PROGRESS);
 
-  const hasInitialSetupDone = data?.me?.initialSetupDone;
+  const isLoading = isSetupProgressDataLoading;
+  const hasUserCompletedOnboarding =
+    !!setupProgressData?.getUserSetupProgress?.completedAt;
 
   useEffect(() => {
-    if (!hasInitialSetupDone) {
-      navigate(ROUTES.SETUP);
+    if (!hasUserCompletedOnboarding) {
+      navigate(ROUTES.ONBOARDING);
+    } else {
+      navigate(ROUTES.DASHBOARD);
     }
-  }, [hasInitialSetupDone, navigate]);
+  }, [hasUserCompletedOnboarding, navigate]);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <Backdrop
-        sx={{ color: colors.white, zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
+      <Backdrop sx={{ color: colors.white, zIndex: 9999 }} open={isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
     );
@@ -60,10 +63,7 @@ export const AppLayout = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor:
-            isCurrentPathAddTransaction && isTablet
-              ? colors.white
-              : colors.grey1,
+          bgcolor: colors.lightGrey1,
           p: isTablet ? 2 : 3,
           height: !isTablet ? "calc(100vh - 120px)" : "100vh",
           overflowY: "auto",
@@ -82,7 +82,7 @@ export const AppLayout = () => {
         </Stack>
       </Box>
 
-      {isTablet && <BottomNav />}
+      {isTablet && !isCurrentPathNameOnboarding && <BottomNav />}
     </Box>
   );
 };

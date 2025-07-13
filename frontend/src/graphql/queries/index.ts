@@ -20,3 +20,15 @@ export const GET_ME = gql`
     }
   }
 `;
+
+export const GET_USER_SETUP_PROGRESS = gql`
+  query GetUserSetupProgress {
+    getUserSetupProgress {
+      userId
+      progress
+      completedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;

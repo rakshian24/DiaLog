@@ -24,6 +24,8 @@ export const LeftNav = () => {
 
   const currentPath = location.pathname;
 
+  const isCurrentPathNameOnboarding = currentPath === ROUTES.ONBOARDING;
+
   return (
     <Drawer
       variant="permanent"
@@ -44,43 +46,47 @@ export const LeftNav = () => {
           sx={{ cursor: "pointer" }}
           onClick={() => navigate(isLoggedIn ? ROUTES.DASHBOARD : ROUTES.LOGIN)}
         >
-          <img src={logo} alt="logo" width={26} />
+          <img src={logo} alt="logo" width={30} />
           <Typography fontWeight="500" color={colors.primary} fontSize={"20px"}>
             {APP_NAME}
           </Typography>
         </Box>
       </Toolbar>
-      <List>
-        {menuItems.map((item) => {
-          const isSelected = currentPath === item.path;
+      {!isCurrentPathNameOnboarding && (
+        <List>
+          {menuItems.map((item) => {
+            const isSelected = currentPath === item.path;
 
-          return (
-            <ListItem
-              key={item.text}
-              onClick={() => navigate(item.path)}
-              sx={{
-                bgcolor: isSelected ? "#2AAC75" : "transparent",
-                cursor: "pointer",
-                color: isSelected ? "#fff" : "inherit",
-                "& .MuiListItemIcon-root": {
+            return (
+              <ListItem
+                key={item.text}
+                onClick={() => navigate(item.path)}
+                sx={{
+                  bgcolor: isSelected ? "#2AAC75" : "transparent",
+                  cursor: "pointer",
                   color: isSelected ? "#fff" : "inherit",
-                },
-                "&:hover": {
-                  bgcolor: isSelected ? "#2AAC75" : "rgba(0, 0, 0, 0.04)",
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: "45px" }}>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontWeight: isSelected ? 600 : 400,
+                  "& .MuiListItemIcon-root": {
+                    color: isSelected ? "#fff" : "inherit",
+                  },
+                  "&:hover": {
+                    bgcolor: isSelected ? "#2AAC75" : "rgba(0, 0, 0, 0.04)",
+                  },
                 }}
-              />
-            </ListItem>
-          );
-        })}
-      </List>
+              >
+                <ListItemIcon sx={{ minWidth: "45px" }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.text}
+                  primaryTypographyProps={{
+                    fontWeight: isSelected ? 600 : 400,
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      )}
     </Drawer>
   );
 };

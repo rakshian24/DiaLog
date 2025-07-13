@@ -4,6 +4,7 @@ import medicationResolvers from "./medication";
 import exerciseResolvers from "./exercise";
 import postMealTimeResolvers from "./postMealTime";
 import readingResolvers from "./reading";
+import userSetupProgress from "./userSetupProgress";
 
 export default {
   Query: {
@@ -13,6 +14,7 @@ export default {
     ...exerciseResolvers.Query,
     ...postMealTimeResolvers.Query,
     ...readingResolvers.Query,
+    ...userSetupProgress.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -21,5 +23,6 @@ export default {
     ...exerciseResolvers.Mutation,
     ...postMealTimeResolvers.Mutation,
     ...readingResolvers.Mutation,
+    ...userSetupProgress.Mutation,
   },
 };

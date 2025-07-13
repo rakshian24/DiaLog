@@ -23,7 +23,7 @@ const CustomSegmentedToggle = <T extends string>({
   selected,
   onChange,
   sx,
-  bgColor = colors.lightGreen,
+  bgColor = colors.primary,
   thumbColor = colors.grey1,
   wrapperSx,
 }: SegmentedToggleProps<T>) => {

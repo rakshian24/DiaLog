@@ -12,7 +12,7 @@ const Home = () => {
   return (
     <Stack direction={"row"} height={"100%"} mb={isTablet ? 10 : 0}>
       {!isTablet && (
-        <Stack width={"65%"} px={6} py={3} bgcolor={colors.lightGrey}>
+        <Stack width={"65%"} px={6} py={3} bgcolor={colors.lightGrey2}>
           <Stack gap={6}>
             <Stack gap={2} justifyContent={"center"} alignItems={"center"}>
               <img src={happyPig} alt="happy-pig" width={300} />

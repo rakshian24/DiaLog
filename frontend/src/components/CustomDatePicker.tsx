@@ -70,7 +70,7 @@ const CustomDatePicker = ({
                 pr: 2.5,
                 borderRadius: 4,
                 ...(error && { color: colors.red }),
-                backgroundColor: error ? colors.lightRed : colors.grey,
+                backgroundColor: error ? colors.lightRed : colors.grey3,
                 ...(inputStyles && { ...inputStyles }),
               },
             },

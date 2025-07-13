@@ -4,7 +4,7 @@ import PostMealTime, { IPostMealTime } from "../../models/PostMealTime";
 import { TimeFrequency } from "../../models/PostMealTime";
 import User from "../../models/User";
 
-interface ExerciseInput {
+interface PostMealTimeInput {
   value: number;
   unit: TimeFrequency;
 }
@@ -13,45 +13,52 @@ const resolvers = {
   Mutation: {
     async addPostMealTime(
       _: unknown,
-      { input: { value, unit } }: { input: ExerciseInput },
+      { input }: { input: PostMealTimeInput[] },
       ctx: any
-    ): Promise<IPostMealTime> {
+    ): Promise<IPostMealTime[]> {
       const loggedInUserId = getLoggedInUserId(ctx);
       const authenticatedUserId = loggedInUserId?.userId;
 
       if (!authenticatedUserId) {
         throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
       }
-      const postMealTimeExists = await PostMealTime.findOne({
-        value,
-        unit,
-        userId: authenticatedUserId,
-      });
 
-      if (postMealTimeExists) {
-        throw new ApolloError(
-          `You already have added ${value} ${unit} as your post meal time.`,
-          "POST_MEAL_TIME_ALREADY_EXISTS"
+      const createdPostMealTimes: IPostMealTime[] = [];
+
+      for (const { value, unit } of input) {
+        const postMealTimeExists = await PostMealTime.findOne({
+          value,
+          unit,
+          userId: authenticatedUserId,
+        });
+
+        if (postMealTimeExists) {
+          throw new ApolloError(
+            `You already have added ${value} ${unit} as your post meal time.`,
+            "POST_MEAL_TIME_ALREADY_EXISTS"
+          );
+        }
+
+        const newPostMealTime = new PostMealTime({
+          value,
+          unit,
+          userId: authenticatedUserId,
+        });
+
+        const saved =
+          (await newPostMealTime.save()) as unknown as IPostMealTime;
+
+        // Update the user's postMealPreferences array
+        await User.findByIdAndUpdate(
+          authenticatedUserId,
+          { $push: { postMealPreferences: saved._id } },
+          { new: true }
         );
+
+        createdPostMealTimes.push(saved);
       }
 
-      const newPostMealTime = new PostMealTime({
-        value,
-        unit,
-        userId: authenticatedUserId,
-      });
-
-      // Update the user's postMealPreferences array
-      await User.findByIdAndUpdate(
-        authenticatedUserId,
-        { $push: { postMealPreferences: newPostMealTime._id } },
-        { new: true }
-      );
-
-      const response =
-        (await newPostMealTime.save()) as unknown as IPostMealTime;
-
-      return response;
+      return createdPostMealTimes;
     },
   },
   Query: {

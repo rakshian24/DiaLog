@@ -116,7 +116,7 @@ const CustomInput = React.forwardRef<HTMLElement, CustomInputProps>(
               fontSize: "1rem",
               padding: 0,
               borderRadius: 4,
-              backgroundColor: error ? colors.lightRed : colors.grey,
+              backgroundColor: error ? colors.lightRed : colors.grey3,
               "& textarea::placeholder": {
                 color: colors.contentTertiary,
                 padding: 0,
