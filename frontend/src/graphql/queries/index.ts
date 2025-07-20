@@ -135,3 +135,24 @@ export const GET_ALL_MEDICATIONS_BY_MEAL_TYPE = gql`
     }
   }
 `;
+
+export const GET_ALL_READINGS = gql`
+  query GetAllReadings {
+    getAllReadings {
+      _id
+      userId
+      dateTime
+      glucoseLevel
+      readingTime
+      foods
+      exercisedToday
+      medications
+      createdAt
+      updatedAt
+      exerciseDetails {
+        exerciseId
+        durationMinutes
+      }
+    }
+  }
+`;

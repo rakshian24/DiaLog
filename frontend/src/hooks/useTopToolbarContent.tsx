@@ -6,6 +6,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
 import { APP_NAME, colors, ROUTES } from "../constants";
 import logo from "../assets/pngs/logo.png";
+import { capitalizeFirstLetter } from "../utils";
 
 interface ToolbarContentOptions {
   onMenuClick: () => void;
@@ -95,7 +96,9 @@ export const useTopToolbarContent = ({
     ),
     centerContent: (
       <Typography fontWeight={600} sx={{ color: colors.primary }}>
-        {currentPath.split("/").pop()?.replace("-", " ") || "Home"}
+        {capitalizeFirstLetter(
+          currentPath.split("/").pop()?.replace("-", " ")
+        ) || "Home"}
       </Typography>
     ),
   };

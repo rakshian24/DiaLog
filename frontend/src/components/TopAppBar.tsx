@@ -2,7 +2,6 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  IconButton,
   Drawer,
   useMediaQuery,
   Box,
@@ -11,7 +10,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { screenSize, colors, APP_NAME } from "../constants";
