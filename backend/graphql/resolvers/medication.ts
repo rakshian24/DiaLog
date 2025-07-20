@@ -11,10 +11,11 @@ import { ReadingTiming } from "../../types";
 interface MedicationInput {
   name: string;
   type: MedicationType;
-  dosage: string;
+  dosage?: string;
   dosageType: MedicationDosageType;
   timeTaken?: string;
   readingTime: ReadingTiming[];
+  dosagePerReadingTime?: Record<ReadingTiming, string>;
 }
 
 const resolvers = {
@@ -22,7 +23,15 @@ const resolvers = {
     async addMedication(
       _: unknown,
       {
-        input: { name, type, dosage, dosageType, timeTaken, readingTime },
+        input: {
+          name,
+          type,
+          dosage,
+          dosageType,
+          timeTaken,
+          readingTime,
+          dosagePerReadingTime,
+        },
       }: { input: MedicationInput },
       ctx: any
     ): Promise<IMedication> {
@@ -48,10 +57,12 @@ const resolvers = {
         name: name.trim(),
         userId: authenticatedUserId,
         type,
-        dosage,
+        dosageType,
         timeTaken,
         readingTime,
-        dosageType,
+        ...(type === MedicationType.insulin
+          ? { dosagePerReadingTime }
+          : { dosage }),
       });
 
       const response = await newMedication.save();

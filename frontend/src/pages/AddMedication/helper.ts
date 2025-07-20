@@ -1,23 +1,19 @@
-import {
-  MedicationDosageType,
-  MedicationType,
-  ReadingTiming,
-} from "../../types";
+import { MedicationType, ReadingTiming } from "../../types";
 
 export interface IAddMedicationFormValueTypes {
   name: string;
   type: MedicationType | null;
-  dosage: string;
-  dosageType: MedicationDosageType | null;
+  dosage?: string;
   timeTaken: string;
-  readingTime: ReadingTiming | null;
+  readingTime: ReadingTiming[] | [];
+  dosagePerReadingTime?: Record<ReadingTiming, string> | {};
 }
 
 export const InitAddMedicationFormValues: IAddMedicationFormValueTypes = {
   name: "",
   type: null,
   dosage: "",
-  dosageType: null,
   timeTaken: "",
-  readingTime: null,
+  readingTime: [],
+  dosagePerReadingTime: {},
 };

@@ -67,7 +67,7 @@ const Register = () => {
   };
 
   return (
-    <Stack gap={isTablet ? 3 : 5} width={"100%"} mt={isTablet ? 5 : 0}>
+    <Stack gap={isTablet ? 3 : 5} width={"100%"} mt={isTablet ? 5 : 0} mb={isTablet ? 10 : 0}>
       <Typography fontSize={isTablet ? 24 : 30} fontWeight={600}>
         Create an account
       </Typography>

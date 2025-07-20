@@ -15,10 +15,11 @@ export interface IMedication extends Document {
   userId: Types.ObjectId;
   name: string;
   type: MedicationType;
-  dosage: string;
+  dosage?: string;
   dosageType: MedicationDosageType;
   timeTaken?: string;
   readingTime: ReadingTiming[];
+  dosagePerReadingTime?: Record<ReadingTiming, string>;
 }
 
 const medicationSchema = new Schema(
@@ -38,11 +39,15 @@ const medicationSchema = new Schema(
       enum: Object.values(MedicationType),
       required: [true, "Medication type is required!"],
     },
-    dosage: { type: String, required: true },
+    dosage: { type: String },
     dosageType: {
       type: String,
       enum: Object.values(MedicationDosageType),
       required: [true, "Medication doasge type is required!"],
+    },
+    dosagePerReadingTime: {
+      type: Map,
+      of: String,
     },
     timeTaken: {
       type: String,

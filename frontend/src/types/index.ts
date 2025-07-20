@@ -26,7 +26,7 @@ export enum MedicationType {
 
 export enum MedicationDosageType {
   mg = "mg",
-  unit = "units",
+  units = "units",
 }
 
 export enum ReadingTiming {
@@ -49,4 +49,5 @@ export type Medication = {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  dosagePerReadingTime?: Record<ReadingTiming, string>;
 };

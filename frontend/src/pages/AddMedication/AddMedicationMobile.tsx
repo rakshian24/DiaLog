@@ -5,7 +5,6 @@ import {
   DialogTitle,
   IconButton,
   MenuItem,
-  SelectChangeEvent,
   Stack,
   Typography,
   useMediaQuery,
@@ -28,7 +27,6 @@ import {
   textInputRegex,
 } from "../../utils";
 import CustomInput from "../../components/CustomInput";
-import CustomSelect from "../../components/CustomSelect";
 import {
   MedicationDosageType,
   MedicationType,
@@ -49,10 +47,15 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { control, formState, handleSubmit, reset } = useForm({
+  const { control, formState, handleSubmit, reset, watch } = useForm({
     defaultValues: { ...InitAddMedicationFormValues },
     mode: "onChange",
   });
+
+  const selectedMedicationType = watch("type");
+
+  const isSelectedMedicationTypeTablet =
+    selectedMedicationType === MedicationType.tablet;
 
   const [addMedication, { loading: isAddMedicationLoading }] =
     useMutation(ADD_MEDICATION);
@@ -74,6 +77,9 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
         variables: {
           input: {
             ...formValues,
+            dosageType: isSelectedMedicationTypeTablet
+              ? MedicationDosageType.mg
+              : MedicationDosageType.units,
           },
         },
         refetchQueries: [
@@ -141,27 +147,6 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
           </DialogTitle>
           <Stack gap={2.5}>
             <Controller
-              name="name"
-              {...COMMON_PROPS}
-              rules={{
-                required: true,
-                pattern: {
-                  value: textInputRegex,
-                  message: "Invalid characters",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <CustomInput
-                  {...field}
-                  error={error !== undefined}
-                  styles={{ width: "100%" }}
-                  placeholder="Enter medication name"
-                  label="Medication name"
-                />
-              )}
-            />
-
-            <Controller
               name="type"
               {...COMMON_PROPS}
               rules={{
@@ -222,7 +207,7 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
             />
 
             <Controller
-              name="dosage"
+              name="name"
               {...COMMON_PROPS}
               rules={{
                 required: true,
@@ -236,36 +221,9 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
                   {...field}
                   error={error !== undefined}
                   styles={{ width: "100%" }}
-                  placeholder="Enter medication dosage (500mg)"
-                  label="Medication dosage"
+                  placeholder="Enter medication name"
+                  label="Medication name"
                 />
-              )}
-            />
-
-            <Controller
-              name="dosageType"
-              {...COMMON_PROPS}
-              rules={{
-                required: true,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <CustomSelect
-                  {...field}
-                  error={error !== undefined}
-                  styles={{ width: "100%" }}
-                  placeholder={"Select your dosage type (mg/unit)"}
-                  label={"Dosage type"}
-                  defaultValue={field.value}
-                  onChange={(e: SelectChangeEvent<unknown>) => {
-                    field.onChange(e.target.value);
-                  }}
-                >
-                  {Object.values(MedicationDosageType).map((dosageType) => (
-                    <MenuItem key={dosageType} value={dosageType}>
-                      {dosageType}
-                    </MenuItem>
-                  ))}
-                </CustomSelect>
               )}
             />
 
@@ -308,6 +266,70 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
                 );
               }}
             />
+
+            {isSelectedMedicationTypeTablet ? (
+              <Controller
+                name="dosage"
+                {...COMMON_PROPS}
+                rules={{
+                  required: isSelectedMedicationTypeTablet ? true : false,
+                  pattern: {
+                    value: textInputRegex,
+                    message: "Invalid characters",
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <CustomInput
+                    {...field}
+                    value={typeof field.value === "string" ? field.value : ""}
+                    error={!!error}
+                    styles={{ width: "100%" }}
+                    placeholder="Enter medication dosage in mg"
+                    label="Medication dosage"
+                  />
+                )}
+              />
+            ) : (
+              <Controller
+                name="dosagePerReadingTime"
+                {...COMMON_PROPS}
+                rules={{
+                  validate: (val) =>
+                    (val &&
+                      typeof val === "object" &&
+                      Object.keys(val).length > 0 &&
+                      Object.values(val).every((v) => v && v.trim() !== "")) ||
+                    "Please enter dosage for each selected time",
+                }}
+                render={({ field, fieldState: { error } }) => {
+                  const selectedReadings = watch("readingTime") || [];
+
+                  return (
+                    <Stack gap={2}>
+                      {selectedReadings.map((rt) => (
+                        <CustomInput
+                          key={rt}
+                          label={`Dosage for ${readingTimingLabels[rt]}`}
+                          placeholder={`Enter insulin units`}
+                          value={
+                            (field.value as Record<ReadingTiming, string>)?.[
+                              rt
+                            ] || ""
+                          }
+                          onChange={(e) => {
+                            field.onChange({
+                              ...(field.value as Record<ReadingTiming, string>),
+                              [rt]: e.target.value,
+                            });
+                          }}
+                          error={error !== undefined}
+                        />
+                      ))}
+                    </Stack>
+                  );
+                }}
+              />
+            )}
 
             <ErrorBox formState={formState} style={{ mb: 2 }} />
           </Stack>

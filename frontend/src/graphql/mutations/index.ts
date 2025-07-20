@@ -86,6 +86,7 @@ export const ADD_MEDICATION = gql`
       updatedAt
       userId
       dosageType
+      dosagePerReadingTime
     }
   }
 `;

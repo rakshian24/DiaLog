@@ -84,8 +84,9 @@ export const typeDefs = gql`
     _id: ID!
     name: String!
     type: MedicationType!
-    dosage: String!
+    dosage: String
     dosageType: MedicationDosageType!
+    dosagePerReadingTime: JSON
     timeTaken: String!
     readingTime: [ReadingTiming!]!
     createdAt: DateTime!
@@ -141,8 +142,9 @@ export const typeDefs = gql`
   input MedicationInput {
     name: String!
     type: MedicationType!
-    dosage: String!
+    dosage: String
     dosageType: MedicationDosageType!
+    dosagePerReadingTime: JSON
     timeTaken: String
     readingTime: [ReadingTiming!]!
   }

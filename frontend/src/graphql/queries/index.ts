@@ -46,6 +46,7 @@ export const GET_ALL_MEDICATIONS = gql`
       createdAt
       updatedAt
       userId
+      dosagePerReadingTime
     }
   }
 `;
