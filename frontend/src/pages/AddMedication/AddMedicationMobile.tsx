@@ -34,7 +34,10 @@ import {
 } from "../../types";
 import { GiMedicines } from "react-icons/gi";
 import { BiSolidInjection } from "react-icons/bi";
-import { GET_ALL_MEDICATIONS } from "../../graphql/queries";
+import {
+  GET_ALL_MEDICATIONS,
+  GET_ALL_MEDICATIONS_BY_MEAL_TYPE,
+} from "../../graphql/queries";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
 
 type Props = {
@@ -85,6 +88,9 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
         refetchQueries: [
           {
             query: GET_ALL_MEDICATIONS,
+          },
+          {
+            query: GET_ALL_MEDICATIONS_BY_MEAL_TYPE, 
           },
         ],
       });

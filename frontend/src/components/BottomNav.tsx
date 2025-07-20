@@ -6,6 +6,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useNavigate, useLocation } from "react-router-dom";
 import { colors, ROUTES } from "../constants";
+import { isRunningStandalone, isStandAloneAndRunningOnIos16 } from "../utils";
 
 export const BottomNav = () => {
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ export const BottomNav = () => {
     },
   };
 
+  console.log(
+    "isStandAloneAndRunningOnIos16 = ",
+    isStandAloneAndRunningOnIos16()
+  );
+  console.log("isRunningStandalone = ", isRunningStandalone());
+
   return (
     <Paper
       sx={{
@@ -28,7 +35,9 @@ export const BottomNav = () => {
         left: 0,
         right: 0,
         borderTop: "1px solid #ddd",
-        paddingBottom: "env(safe-area-inset-bottom)",
+        paddingBottom: isStandAloneAndRunningOnIos16()
+          ? "40px"
+          : "env(safe-area-inset-bottom)",
         zIndex: 1000,
       }}
       elevation={3}
