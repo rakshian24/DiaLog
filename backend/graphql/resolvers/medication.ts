@@ -117,6 +117,49 @@ const resolvers = {
 
       return medications as unknown as IMedication[];
     },
+
+    async getAllMedicationsByMealType(
+      _: unknown,
+      args: {},
+      ctx: any
+    ): Promise<Record<ReadingTiming, IMedication[]>> {
+      const loggedInUserId = getLoggedInUserId(ctx);
+      const userId = loggedInUserId?.userId;
+
+      if (!userId) {
+        throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
+      }
+
+      const allMedications = (await Medication.find({ userId }).sort({
+        createdAt: -1,
+      })) as unknown as IMedication[];
+
+      const categorized: Record<ReadingTiming, IMedication[]> = {
+        BEFORE_BREAKFAST: [],
+        AFTER_BREAKFAST: [],
+        BEFORE_LUNCH: [],
+        AFTER_LUNCH: [],
+        BEFORE_DINNER: [],
+        AFTER_DINNER: [],
+      };
+
+      for (const med of allMedications) {
+        for (const time of med.readingTime) {
+          if (categorized[time]) {
+            categorized[time].push(med);
+          }
+        }
+      }
+
+      return {
+        BEFORE_BREAKFAST: categorized.BEFORE_BREAKFAST,
+        AFTER_BREAKFAST: categorized.AFTER_BREAKFAST,
+        BEFORE_LUNCH: categorized.BEFORE_LUNCH,
+        AFTER_LUNCH: categorized.AFTER_LUNCH,
+        BEFORE_DINNER: categorized.BEFORE_DINNER,
+        AFTER_DINNER: categorized.AFTER_DINNER,
+      };
+    },
   },
 };
 

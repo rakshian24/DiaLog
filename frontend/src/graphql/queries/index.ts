@@ -50,3 +50,88 @@ export const GET_ALL_MEDICATIONS = gql`
     }
   }
 `;
+
+export const GET_ALL_MEDICATIONS_BY_MEAL_TYPE = gql`
+  query GetAllMedicationsByMealType {
+    getAllMedicationsByMealType {
+      BEFORE_BREAKFAST {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
+      AFTER_BREAKFAST {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
+      BEFORE_LUNCH {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
+      AFTER_LUNCH {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
+      BEFORE_DINNER {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
+      AFTER_DINNER {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
+    }
+  }
+`;

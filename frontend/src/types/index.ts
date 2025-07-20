@@ -51,3 +51,17 @@ export type Medication = {
   userId: string;
   dosagePerReadingTime?: Record<ReadingTiming, string>;
 };
+
+export enum MedicationViewType {
+  LIST_VIEW = "LIST_VIEW",
+  BY_MEAL_TYPE = "BY_MEAL_TYPE",
+}
+
+export type MedicationsByMealType = {
+  BEFORE_BREAKFAST: [Medication];
+  AFTER_BREAKFAST: [Medication];
+  BEFORE_LUNCH: [Medication];
+  AFTER_LUNCH: [Medication];
+  BEFORE_DINNER: [Medication];
+  AFTER_DINNER: [Medication];
+};

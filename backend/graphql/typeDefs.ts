@@ -94,6 +94,15 @@ export const typeDefs = gql`
     userId: ID!
   }
 
+  type MedicationsByMealType {
+    BEFORE_BREAKFAST: [Medication]
+    AFTER_BREAKFAST: [Medication]
+    BEFORE_LUNCH: [Medication]
+    AFTER_LUNCH: [Medication]
+    BEFORE_DINNER: [Medication]
+    AFTER_DINNER: [Medication]
+  }
+
   type Exercise {
     _id: ID!
     type: String!
@@ -190,6 +199,7 @@ export const typeDefs = gql`
 
     getMedicationById(id: ID!): Medication
     getAllMedications: [Medication]
+    getAllMedicationsByMealType: MedicationsByMealType
 
     getAllExercises: [Exercise]
 

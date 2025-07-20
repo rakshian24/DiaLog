@@ -19,19 +19,32 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   GET_ALL_MEDICATIONS,
+  GET_ALL_MEDICATIONS_BY_MEAL_TYPE,
   GET_USER_SETUP_PROGRESS,
 } from "../graphql/queries";
-import { Medication, MedicationType, SetupSteps } from "../types";
+import {
+  Medication,
+  MedicationType,
+  MedicationViewType,
+  ReadingTiming,
+  SetupSteps,
+} from "../types";
 import { UPDATE_SETUP_PROGRESS } from "../graphql/mutations";
 import { useNavigate } from "react-router-dom";
 import { readingTimingLabels } from "../utils";
 import { BiSolidInjection } from "react-icons/bi";
 import { FaCloudSun, FaMoon, FaSun } from "react-icons/fa";
 import DotSeparator from "./DotSeparator";
+import CustomSegmentedToggle, {
+  CustomSegmentedToggleOption,
+} from "./CustomSegmentedToggle";
 
 type Props = {};
 
 const MedicationOnboarding = (props: Props) => {
+  const [viewType, setViewType] = useState<MedicationViewType>(
+    MedicationViewType.LIST_VIEW
+  );
   const navigate = useNavigate();
   const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
 
@@ -41,15 +54,43 @@ const MedicationOnboarding = (props: Props) => {
   const { data: medicationsData, loading: isMedicationsDataLoading } =
     useQuery(GET_ALL_MEDICATIONS);
 
+  const {
+    data: medicationsByMealTypeData,
+    loading: isMedicationsByMealTypeDataLoading,
+  } = useQuery(GET_ALL_MEDICATIONS_BY_MEAL_TYPE);
+
   const [updateSetupProgress, { loading: isUpdateSetupProgressLoading }] =
     useMutation(UPDATE_SETUP_PROGRESS);
 
-  if (isMedicationsDataLoading) {
+  if (isMedicationsDataLoading || isMedicationsByMealTypeDataLoading) {
     return <p>Loading...</p>;
   }
 
   const medications = medicationsData?.getAllMedications || [];
   const hasAddedMedications = medications.length > 0;
+
+  const medicationByMealTypeData =
+    medicationsByMealTypeData?.getAllMedicationsByMealType || {};
+
+  const { __typename, ...medicationDataWithoutTypename } =
+    medicationByMealTypeData;
+
+  const toggleOptions: CustomSegmentedToggleOption<
+    MedicationViewType.LIST_VIEW | MedicationViewType.BY_MEAL_TYPE
+  >[] = [
+    {
+      label: "List view",
+      value: MedicationViewType.LIST_VIEW,
+      bgColor: colors.white,
+      textColor: colors.black,
+    },
+    {
+      label: "By meal time",
+      value: MedicationViewType.BY_MEAL_TYPE,
+      bgColor: colors.white,
+      textColor: colors.black,
+    },
+  ];
 
   const handleMedOnboardingCompletion = async () => {
     const { data } = await updateSetupProgress({
@@ -196,135 +237,263 @@ const MedicationOnboarding = (props: Props) => {
         />
       </Box>
 
-      <Stack gap={2}>
-        {medications.map((medication: Medication) => {
-          const isMedicationTypeTablet =
-            medication.type === MedicationType.tablet;
+      <Box display="flex">
+        <CustomSegmentedToggle
+          options={toggleOptions}
+          selected={viewType}
+          onChange={(newValue: MedicationViewType) => {
+            if (newValue !== viewType) {
+              setViewType(newValue);
+            }
+          }}
+          sx={{ flex: 1 }}
+          thumbColor={colors.lightGrey3}
+          wrapperSx={{ width: isTablet ? "100%" : "auto" }}
+        />
+      </Box>
 
-          const readingTimeLength = medication.readingTime.length;
-          return (
-            <Card
-              key={medication._id}
-              sx={{
-                borderRadius: 3,
-                p: 2,
-              }}
-            >
-              <Stack gap={1}>
-                <Stack direction={"row"} gap={1} alignItems={"center"}>
-                  {isMedicationTypeTablet ? (
-                    <GiMedicines
-                      style={{ fontSize: "16px", color: colors.blue }}
-                    />
-                  ) : (
-                    <BiSolidInjection
-                      style={{ fontSize: "16px", color: colors.blue }}
-                    />
-                  )}
-                  <Typography fontWeight={600}>{medication.name}</Typography>
-                </Stack>
-                <Stack
-                  direction={"row"}
-                  gap={1.25}
-                  alignItems={"center"}
-                  mb={1}
-                >
-                  <Box
-                    sx={{
-                      color: colors.blue,
-                      bgcolor: colors.blueBg,
-                      px: 2,
-                      py: 0.5,
-                      borderRadius: 10,
-                      textAlign: "center",
-                      width: "fit-content",
-                    }}
+      {viewType === MedicationViewType.LIST_VIEW ? (
+        <Stack gap={2}>
+          {medications.map((medication: Medication) => {
+            const isMedicationTypeTablet =
+              medication.type === MedicationType.tablet;
+
+            const readingTimeLength = medication.readingTime.length;
+            return (
+              <Card
+                key={medication._id}
+                sx={{
+                  borderRadius: 3,
+                  p: 2,
+                }}
+              >
+                <Stack gap={1}>
+                  <Stack direction={"row"} gap={1} alignItems={"center"}>
+                    {isMedicationTypeTablet ? (
+                      <GiMedicines
+                        style={{ fontSize: "16px", color: colors.blue }}
+                      />
+                    ) : (
+                      <BiSolidInjection
+                        style={{ fontSize: "16px", color: colors.blue }}
+                      />
+                    )}
+                    <Typography fontWeight={600}>{medication.name}</Typography>
+                  </Stack>
+                  <Stack
+                    direction={"row"}
+                    gap={1.25}
+                    alignItems={"center"}
+                    mb={1}
                   >
-                    <Typography
-                      fontSize={isTablet ? 12 : 14}
-                      fontWeight={"500"}
+                    <Box
+                      sx={{
+                        color: colors.blue,
+                        bgcolor: colors.blueBg,
+                        px: 2,
+                        py: 0.5,
+                        borderRadius: 10,
+                        textAlign: "center",
+                        width: "fit-content",
+                      }}
                     >
-                      {isMedicationTypeTablet ? "Tablet" : "Insulin"}
-                    </Typography>
-                  </Box>
+                      <Typography
+                        fontSize={isTablet ? 12 : 14}
+                        fontWeight={"500"}
+                      >
+                        {isMedicationTypeTablet ? "Tablet" : "Insulin"}
+                      </Typography>
+                    </Box>
 
-                  {isMedicationTypeTablet && (
-                    <Typography
-                      fontSize={isTablet ? 12 : 14}
-                      fontWeight={"500"}
-                      color={colors.contentSecondary}
-                    >{`${medication.dosage} ${medication.dosageType}`}</Typography>
-                  )}
-                  {isMedicationTypeTablet && <DotSeparator sx={{ mx: 0.5 }} />}
-                  <Typography fontSize={isTablet ? 12 : 14}>
-                    {readingTimeLength}{" "}
-                    {readingTimeLength > 1 ? "times" : "time"} daily
+                    {isMedicationTypeTablet && (
+                      <Typography
+                        fontSize={isTablet ? 12 : 14}
+                        fontWeight={"500"}
+                        color={colors.contentSecondary}
+                      >{`${medication.dosage} ${medication.dosageType}`}</Typography>
+                    )}
+                    {isMedicationTypeTablet && (
+                      <DotSeparator sx={{ mx: 0.5 }} />
+                    )}
+                    <Typography fontSize={isTablet ? 12 : 14}>
+                      {readingTimeLength}{" "}
+                      {readingTimeLength > 1 ? "times" : "time"} daily
+                    </Typography>
+                  </Stack>
+                  <Grid container spacing={2}>
+                    {medication.readingTime.map((time) => {
+                      const isTablet =
+                        medication.type === MedicationType.tablet;
+                      const dosage = isTablet
+                        ? `1 ${
+                            medication.dosageType === "mg"
+                              ? "tablet"
+                              : medication.dosageType
+                          }`
+                        : `${medication.dosagePerReadingTime?.[time] || "-"} ${
+                            medication.dosageType
+                          }`;
+
+                      const label = readingTimingLabels[time];
+
+                      return (
+                        <Grid
+                          item
+                          xs={readingTimeLength > 1 ? 6 : 12}
+                          sm={readingTimeLength > 1 ? 6 : 12}
+                          md={6}
+                          lg={4}
+                          key={time}
+                        >
+                          <Box
+                            sx={{
+                              backgroundColor: chipBgColorMap[time],
+                              p: 1.5,
+                              borderRadius: 2,
+                            }}
+                          >
+                            <Stack gap={0.75}>
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                                spacing={1}
+                              >
+                                {iconMap[time]}
+                                <Typography
+                                  fontSize={13}
+                                  fontWeight={600}
+                                  color={chipColorMap[time]}
+                                >
+                                  {label}
+                                </Typography>
+                              </Stack>
+                              <Typography
+                                fontSize={14}
+                                fontWeight={700}
+                                color={colors.contentSecondary}
+                              >
+                                {dosage}
+                              </Typography>
+                            </Stack>
+                          </Box>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Stack>
+              </Card>
+            );
+          })}
+        </Stack>
+      ) : (
+        <Stack>
+          {Object.entries(
+            medicationDataWithoutTypename as Record<ReadingTiming, Medication[]>
+          ).map(([timingKey, meds]) => {
+            const timing = timingKey as ReadingTiming;
+
+            const label = readingTimingLabels[timing];
+            const icon = iconMap[timing];
+            const color = chipColorMap[timing];
+
+            return (
+              <Card
+                key={timing}
+                sx={{
+                  p: 2,
+                  borderRadius: 3,
+                  mb: 2,
+                  borderLeft: `5px solid ${color}`,
+                }}
+              >
+                <Stack direction="row" alignItems="center" gap={1} mb={1}>
+                  {icon}
+                  <Typography fontWeight={600} color={color}>
+                    {label}
                   </Typography>
                 </Stack>
-                <Grid container spacing={2}>
-                  {medication.readingTime.map((time) => {
-                    const isTablet = medication.type === MedicationType.tablet;
-                    const dosage = isTablet
-                      ? `1 ${
-                          medication.dosageType === "mg"
-                            ? "tablet"
-                            : medication.dosageType
-                        }`
-                      : `${medication.dosagePerReadingTime?.[time] || "-"} ${
-                          medication.dosageType
-                        }`;
 
-                    const label = readingTimingLabels[time];
+                {meds.length === 0 ? (
+                  <Stack alignItems="center" py={2}>
+                    <Typography fontSize={14} color={colors.contentTertiary}>
+                      No medications scheduled
+                    </Typography>
+                  </Stack>
+                ) : (
+                  <Stack gap={1}>
+                    {meds?.map((med: Medication) => {
+                      const isTablet = med.type === MedicationType.tablet;
+                      const dosage = isTablet
+                        ? `Tablet - ${med.dosage} ${med.dosageType}`
+                        : `${med?.dosagePerReadingTime?.[timing] || "-"} ${
+                            med.dosageType
+                          }`;
+                      const frequency = isTablet
+                        ? `1 tablet`
+                        : `${med?.dosagePerReadingTime?.[timing] || "-"}`;
 
-                    return (
-                      <Grid
-                        item
-                        xs={readingTimeLength > 1 ? 6 : 12}
-                        sm={readingTimeLength > 1 ? 6 : 12}
-                        md={6}
-                        lg={4}
-                        key={time}
-                      >
+                      return (
                         <Box
+                          key={med._id}
                           sx={{
-                            backgroundColor: chipBgColorMap[time],
-                            p: 1.5,
+                            p: 2,
                             borderRadius: 2,
+                            border: `1px solid ${colors.lightGrey3}`,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            background: colors.white,
                           }}
                         >
-                          <Stack gap={0.75}>
+                          <Stack>
                             <Stack
-                              direction="row"
-                              alignItems="center"
-                              spacing={1}
+                              direction={"row"}
+                              gap={1}
+                              alignItems={"center"}
                             >
-                              {iconMap[time]}
-                              <Typography
-                                fontSize={13}
-                                fontWeight={600}
-                                color={chipColorMap[time]}
-                              >
-                                {label}
+                              {isTablet ? (
+                                <GiMedicines
+                                  style={{
+                                    fontSize: "16px",
+                                    color: colors.blue,
+                                  }}
+                                />
+                              ) : (
+                                <BiSolidInjection
+                                  style={{
+                                    fontSize: "16px",
+                                    color: colors.blue,
+                                  }}
+                                />
+                              )}
+                              <Typography fontWeight={600}>
+                                {med.name}
                               </Typography>
                             </Stack>
                             <Typography
-                              fontSize={14}
-                              fontWeight={700}
+                              fontSize={13}
                               color={colors.contentSecondary}
                             >
                               {dosage}
                             </Typography>
                           </Stack>
+                          {isTablet && (
+                            <Stack alignItems="flex-end">
+                              <Typography fontSize={13} fontWeight={600}>
+                                {frequency}
+                              </Typography>
+                            </Stack>
+                          )}
                         </Box>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              </Stack>
-            </Card>
-          );
-        })}
-      </Stack>
+                      );
+                    })}
+                  </Stack>
+                )}
+              </Card>
+            );
+          })}
+        </Stack>
+      )}
 
       {hasAddedMedications && (
         <Button
