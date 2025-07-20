@@ -11,12 +11,14 @@ export interface IReading extends Document {
   exercisedToday?: boolean;
   exerciseDetails?: IExerciseDetail[];
   medications?: Types.ObjectId[];
+  notes?: string;
 }
 
 const readingSchema = new Schema(
   {
     userId: { type: Types.ObjectId, ref: "User", required: true },
     dateTime: { type: Date, required: true },
+    notes: { type: String },
     glucoseLevel: { type: Number, required: true },
     readingTime: {
       type: String,

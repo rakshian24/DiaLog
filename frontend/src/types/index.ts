@@ -55,6 +55,7 @@ export type Medication = {
 export enum MedicationViewType {
   LIST_VIEW = "LIST_VIEW",
   BY_MEAL_TYPE = "BY_MEAL_TYPE",
+  ADD_READING = "ADD_READING",
 }
 
 export type MedicationsByMealType = {
@@ -64,4 +65,12 @@ export type MedicationsByMealType = {
   AFTER_LUNCH: [Medication];
   BEFORE_DINNER: [Medication];
   AFTER_DINNER: [Medication];
+};
+
+export type Food = {
+  name: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  _id: string;
 };

@@ -90,7 +90,7 @@ const AddMedicationMobile = ({ open, handleClose }: Props) => {
             query: GET_ALL_MEDICATIONS,
           },
           {
-            query: GET_ALL_MEDICATIONS_BY_MEAL_TYPE, 
+            query: GET_ALL_MEDICATIONS_BY_MEAL_TYPE,
           },
         ],
       });

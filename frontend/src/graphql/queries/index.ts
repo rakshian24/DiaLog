@@ -156,3 +156,15 @@ export const GET_ALL_READINGS = gql`
     }
   }
 `;
+
+export const GET_ALL_FOODS = gql`
+  query GetAllFoods {
+    getAllFoods {
+      name
+      userId
+      createdAt
+      updatedAt
+      _id
+    }
+  }
+`;

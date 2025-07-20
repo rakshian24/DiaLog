@@ -36,6 +36,7 @@ const CustomSelect = React.forwardRef<HTMLElement, Props>(function CustomSelect(
       gap={"4px"}
     >
       <Select
+        error={error}
         {...props}
         inputRef={ref as RefCallback<HTMLTextAreaElement | HTMLInputElement>}
         variant="filled"
@@ -74,7 +75,7 @@ const CustomSelect = React.forwardRef<HTMLElement, Props>(function CustomSelect(
             },
           },
           "& .MuiSelect-icon": {
-            color: colors.contentTertiary,
+            color: error ? colors.red : colors.contentTertiary,
           },
           ...(selectStyles && { ...selectStyles }),
         }}
