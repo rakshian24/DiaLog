@@ -1,4 +1,4 @@
-import { PmtTrackingOption, TimeFrequency } from "../types";
+import { PmtTrackingOption, ReadingTiming, TimeFrequency } from "../types";
 
 export const textInputRegex =
   /^(?!\s+$)[~!\s@#$%^&*()_+=[\]{}|;':",./<>?a-zA-Z0-9-]+$/;
@@ -99,4 +99,28 @@ export const readingTimingLabels: Record<string, string> = {
 export const medicationTypeLabels: Record<string, string> = {
   tablet: "Tablet",
   insulin: "Insulin",
+};
+
+export const readingTimesRequiringFoodInput = [
+  ReadingTiming.AFTER_BREAKFAST,
+  ReadingTiming.AFTER_LUNCH,
+  ReadingTiming.AFTER_DINNER,
+];
+
+export const chipBgColorMap: Record<string, string> = {
+  BEFORE_BREAKFAST: "#FEFBEB",
+  AFTER_BREAKFAST: "#FFF7ED",
+  BEFORE_LUNCH: "#FEFCE8",
+  AFTER_LUNCH: "#F6FEE7",
+  BEFORE_DINNER: "#FAF5FF",
+  AFTER_DINNER: "#EEF2FF",
+};
+
+export const chipColorMap: Record<string, string> = {
+  BEFORE_BREAKFAST: "#B4530A",
+  AFTER_BREAKFAST: "#EA580B",
+  BEFORE_LUNCH: "#CA8A03",
+  AFTER_LUNCH: "#65A20C",
+  BEFORE_DINNER: "#9333E9",
+  AFTER_DINNER: "#4F45E4",
 };

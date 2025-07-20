@@ -90,3 +90,36 @@ export const ADD_MEDICATION = gql`
     }
   }
 `;
+
+export const ADD_READING = gql`
+  mutation Mutation($input: ReadingInput) {
+    addReading(input: $input) {
+      _id
+      userId
+      dateTime
+      glucoseLevel
+      readingTime
+      foods
+      exercisedToday
+      medications
+      createdAt
+      updatedAt
+      exerciseDetails {
+        durationMinutes
+        exerciseId
+      }
+    }
+  }
+`;
+
+export const ADD_FOOD = gql`
+  mutation Mutation($input: FoodInput) {
+    createFood(input: $input) {
+      _id
+      name
+      userId
+      createdAt
+      updatedAt
+    }
+  }
+`;

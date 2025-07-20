@@ -58,6 +58,7 @@ export const TopAppBar = () => {
         anchor="left"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+        sx={{ zIndex: 99999 }}
       >
         <Box
           sx={{ width: 250 }}

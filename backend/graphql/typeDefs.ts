@@ -120,6 +120,7 @@ export const typeDefs = gql`
     _id: ID!
     userId: ID!
     dateTime: String!
+    notes: String
     glucoseLevel: Int!
     readingTime: ReadingTiming!
     foods: [ID]
@@ -174,6 +175,7 @@ export const typeDefs = gql`
 
   input ReadingInput {
     dateTime: String!
+    notes: String
     glucoseLevel: Int!
     readingTime: ReadingTiming!
     foods: [ID]

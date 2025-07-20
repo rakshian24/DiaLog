@@ -6,6 +6,7 @@ import { Types } from "mongoose";
 
 interface ReadingInput {
   dateTime: string;
+  notes?: string;
   glucoseLevel: number;
   readingTime: ReadingTiming;
   foods?: Types.ObjectId[];
@@ -27,6 +28,7 @@ const resolvers = {
           exerciseDetails,
           exercisedToday,
           medications,
+          notes,
         },
       }: { input: ReadingInput },
       ctx: any
@@ -47,6 +49,7 @@ const resolvers = {
         exercisedToday,
         medications,
         userId: authenticatedUserId,
+        notes,
       });
 
       const response = (await newReading.save()) as unknown as IReading;
