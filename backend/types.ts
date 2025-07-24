@@ -1,5 +1,6 @@
 import { Document, Types } from "mongoose";
 import { IUser } from "./models/User";
+import { IReading } from "./models/Reading";
 
 export enum ReadingTiming {
   BEFORE_BREAKFAST = "BEFORE_BREAKFAST",
@@ -22,4 +23,10 @@ export enum SetupSteps {
 
 export type IUserLean = Omit<IUser, keyof Document> & {
   _id: Types.ObjectId;
+};
+
+export type GroupedReadings = {
+  Breakfast: IReading[];
+  Lunch: IReading[];
+  Dinner: IReading[];
 };

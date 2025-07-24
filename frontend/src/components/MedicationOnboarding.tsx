@@ -123,7 +123,7 @@ const MedicationOnboarding = (props: Props) => {
         />
       </Box>
 
-      <MedicationList />
+      {hasAddedMedications && <MedicationList />}
 
       {hasAddedMedications && (
         <Button

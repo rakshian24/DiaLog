@@ -2,13 +2,17 @@ import { Avatar, Stack, Typography } from "@mui/material";
 import { BsHeartFill } from "react-icons/bs";
 import { GoGraph } from "react-icons/go";
 import useResponsiveFontSizes from "../../hooks/useResponsiveFontSizes";
-import { colors } from "../../constants";
+import { colors, ROUTES } from "../../constants";
 import Button from "../../components/CustomButton";
+import { useNavigate } from "react-router-dom";
+import { AddOutlined } from "@mui/icons-material";
 
 type Props = {};
 
 const NoReadings = (props: Props) => {
   const { sectionTitle, pageHeading } = useResponsiveFontSizes();
+  const navigate = useNavigate();
+
   return (
     <Stack gap={2} justifyContent={"center"}>
       <Avatar
@@ -58,7 +62,11 @@ const NoReadings = (props: Props) => {
             Record your blood glucose readings before
             <br /> and after meals to see patterns.
           </Typography>
-          <Button buttonText="Add first reading" />
+          <Button
+            buttonText="Add first reading"
+            onClick={() => navigate(ROUTES.ADD_READING)}
+            startIcon={<AddOutlined />}
+          />
         </Stack>
       </Stack>
     </Stack>

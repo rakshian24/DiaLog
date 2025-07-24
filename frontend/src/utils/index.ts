@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { PmtTrackingOption, ReadingTiming, TimeFrequency } from "../types";
 
 export const textInputRegex =
@@ -123,4 +124,57 @@ export const chipColorMap: Record<string, string> = {
   AFTER_LUNCH: "#65A20C",
   BEFORE_DINNER: "#9333E9",
   AFTER_DINNER: "#4F45E4",
+};
+
+export const stripTypename = <T>(data: T): T => {
+  if (Array.isArray(data)) {
+    return data.map(stripTypename) as unknown as T;
+  }
+
+  if (typeof data === "object" && data !== null) {
+    const newObj: Record<string, any> = {};
+    for (const key in data) {
+      if (key !== "__typename") {
+        newObj[key] = stripTypename((data as Record<string, any>)[key]);
+      }
+    }
+    return newObj as T;
+  }
+
+  return data;
+};
+
+export const getDayLabel = (dateTime: string): "Today" | "Yesterday" | null => {
+  const inputDate = dayjs(dateTime);
+  const today = dayjs();
+  const yesterday = dayjs().subtract(1, "day");
+
+  if (inputDate.isSame(today, "day")) {
+    return "Today";
+  }
+
+  if (inputDate.isSame(yesterday, "day")) {
+    return "Yesterday";
+  }
+
+  return null;
+};
+
+export const getMealTime = (
+  afterMealDateTime?: string,
+  beforeMealDateTime?: string,
+  hoursToSubtract: number = 2
+): string | null => {
+  if (!afterMealDateTime && !beforeMealDateTime) {
+    return null;
+  } else if (afterMealDateTime) {
+    return dayjs(afterMealDateTime)
+      .subtract(hoursToSubtract, "hour")
+      .format("h:mm A");
+  }
+  return dayjs(beforeMealDateTime).format("h:mm A");
+};
+
+export const isToday = (dateString: string): boolean => {
+  return dayjs(dateString).isSame(dayjs(), "day");
 };

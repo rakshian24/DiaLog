@@ -168,3 +168,118 @@ export const GET_ALL_FOODS = gql`
     }
   }
 `;
+
+export const GET_TODAYS_OR_LATEST_READINGS = gql`
+  query GetTodaysOrLatestReadings {
+    getTodaysOrLatestGroupedReadings {
+      readingDate
+      readings {
+        Breakfast {
+          _id
+          userId
+          dateTime
+          notes
+          glucoseLevel
+          readingTime
+          exercisedToday
+          createdAt
+          updatedAt
+          foods {
+            _id
+            name
+            userId
+            createdAt
+            updatedAt
+          }
+          exerciseDetails {
+            exerciseId
+            durationMinutes
+          }
+          medications {
+            _id
+            name
+            type
+            dosage
+            dosageType
+            dosagePerReadingTime
+            timeTaken
+            readingTime
+            createdAt
+            updatedAt
+            userId
+          }
+        }
+        Lunch {
+          _id
+          userId
+          dateTime
+          notes
+          glucoseLevel
+          readingTime
+          exercisedToday
+          createdAt
+          updatedAt
+          foods {
+            _id
+            name
+            userId
+            createdAt
+            updatedAt
+          }
+          exerciseDetails {
+            exerciseId
+            durationMinutes
+          }
+          medications {
+            _id
+            name
+            type
+            dosage
+            dosageType
+            dosagePerReadingTime
+            timeTaken
+            readingTime
+            createdAt
+            updatedAt
+            userId
+          }
+        }
+        Dinner {
+          _id
+          userId
+          dateTime
+          notes
+          glucoseLevel
+          readingTime
+          exercisedToday
+          createdAt
+          updatedAt
+          foods {
+            _id
+            name
+            userId
+            createdAt
+            updatedAt
+          }
+          exerciseDetails {
+            exerciseId
+            durationMinutes
+          }
+          medications {
+            _id
+            name
+            type
+            dosage
+            dosageType
+            dosagePerReadingTime
+            timeTaken
+            readingTime
+            createdAt
+            updatedAt
+            userId
+          }
+        }
+      }
+    }
+  }
+`;

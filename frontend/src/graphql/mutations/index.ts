@@ -99,9 +99,27 @@ export const ADD_READING = gql`
       dateTime
       glucoseLevel
       readingTime
-      foods
+      foods {
+        _id
+        name
+        userId
+        createdAt
+        updatedAt
+      }
       exercisedToday
-      medications
+      medications {
+        _id
+        name
+        type
+        dosage
+        dosageType
+        dosagePerReadingTime
+        timeTaken
+        readingTime
+        createdAt
+        updatedAt
+        userId
+      }
       createdAt
       updatedAt
       exerciseDetails {

@@ -74,3 +74,34 @@ export type Food = {
   updatedAt: string;
   _id: string;
 };
+
+export type ExerciseDetails = {
+  exerciseId: string;
+  durationMinutes: string;
+};
+
+export type Reading = {
+  _id: string;
+  userId: string;
+  dateTime: string;
+  notes: string;
+  glucoseLevel: number;
+  readingTime: string;
+  foods: Food[];
+  exercisedToday: string;
+  medications: Medication[];
+  exerciseDetails: ExerciseDetails;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type GroupedReadings = {
+  Breakfast: Reading[];
+  Lunch: Reading[];
+  Dinner: Reading[];
+};
+
+export type DashboardGroupedReadings = {
+  readings: GroupedReadings;
+  readingDate: string;
+};
