@@ -17,14 +17,23 @@ import { IAddReadingFormValueTypes, InitAddReadingFormValues } from "./helper";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@apollo/client";
 import { ADD_FOOD, ADD_READING } from "../../graphql/mutations";
-import { GET_ALL_FOODS, GET_ALL_READINGS } from "../../graphql/queries";
+import {
+  GET_ALL_FOODS,
+  GET_ALL_MEDICATIONS,
+  GET_TODAYS_OR_LATEST_READINGS,
+} from "../../graphql/queries";
 import { AddOutlined, CloseOutlined } from "@mui/icons-material";
 import ErrorBox from "../../components/ErrorBox";
 import Button from "../../components/CustomButton";
 import dayjs from "dayjs";
 import CustomDateTimePicker from "../../components/CustomDateTimePicker";
 import CustomSelect from "../../components/CustomSelect";
-import { Food, MedicationViewType, ReadingTiming } from "../../types";
+import {
+  Food,
+  Medication,
+  MedicationViewType,
+  ReadingTiming,
+} from "../../types";
 import {
   readingTimesRequiringFoodInput,
   readingTimingLabels,
@@ -34,9 +43,7 @@ import { CustomInputField } from "../../components/CustomInputField";
 import CustomMultiSelectWithChips from "../../components/CustomMultiSelectWithChips";
 import MedicationList from "../../components/MedicationList";
 
-type Props = {};
-
-const AddReading = (props: Props) => {
+const AddReading = () => {
   const [open, setOpen] = useState(true);
   const [foodItems, setFoodItems] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,9 +67,13 @@ const AddReading = (props: Props) => {
   const { data: foodsData, loading: isFoodsDataLoading } =
     useQuery(GET_ALL_FOODS);
 
-  if (isFoodsDataLoading) return <p>Loading...</p>;
+  const { data: medicationsData, loading: isMedicationsDataLoading } =
+    useQuery(GET_ALL_MEDICATIONS);
+
+  if (isFoodsDataLoading || isMedicationsDataLoading) return <p>Loading...</p>;
 
   const foods: Food[] = foodsData?.getAllFoods || [];
+  const medications: Medication[] = medicationsData?.getAllMedications || [];
 
   const { errors } = formState;
   const COMMON_PROPS = { control, errors };
@@ -82,12 +93,10 @@ const AddReading = (props: Props) => {
       glucoseLevel: Number(formValues.glucoseLevel),
     };
 
-    console.log("formInput = ", formInput);
-
     try {
       const { data } = await addReading({
         variables: { input: formInput },
-        refetchQueries: [{ query: GET_ALL_READINGS }],
+        refetchQueries: [{ query: GET_TODAYS_OR_LATEST_READINGS }],
       });
       if (data?.addReading?._id) handleOnClose();
     } catch (error) {
@@ -96,6 +105,12 @@ const AddReading = (props: Props) => {
       setIsLoading(false);
     }
   };
+
+  const matchingMedsWithSelectedReadingTime =
+    selectedReadingTime &&
+    medications?.filter((med: Medication) =>
+      med.readingTime.includes(selectedReadingTime)
+    );
 
   return (
     <Dialog
@@ -311,24 +326,25 @@ const AddReading = (props: Props) => {
 
             {/* Add Exercise details later */}
 
-            {selectedReadingTime && (
-              <Stack gap={2}>
-                <Stack gap={0.5}>
-                  <Typography fontSize={18} fontWeight={"500"}>
-                    Select medications taken
-                  </Typography>
-                  <Typography fontSize={14} color={colors.contentSecondary}>
-                    Choose which medications you've taken for this entry
-                  </Typography>
+            {selectedReadingTime &&
+              matchingMedsWithSelectedReadingTime.length > 0 && (
+                <Stack gap={2}>
+                  <Stack gap={0.5}>
+                    <Typography fontSize={18} fontWeight={"500"}>
+                      Select medications taken
+                    </Typography>
+                    <Typography fontSize={14} color={colors.contentSecondary}>
+                      Choose which medications you've taken for this entry
+                    </Typography>
+                  </Stack>
+                  <MedicationList
+                    medListViewType={MedicationViewType.ADD_READING}
+                    onSelectionChange={setSelectedMedicationIds}
+                    selectedMedicationIds={selectedMedicationIds}
+                    selectedReadingType={selectedReadingTime}
+                  />
                 </Stack>
-                <MedicationList
-                  medListViewType={MedicationViewType.ADD_READING}
-                  onSelectionChange={setSelectedMedicationIds}
-                  selectedMedicationIds={selectedMedicationIds}
-                  selectedReadingType={selectedReadingTime}
-                />
-              </Stack>
-            )}
+              )}
 
             <ErrorBox formState={formState} style={{ mb: 2 }} />
           </Stack>

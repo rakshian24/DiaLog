@@ -119,16 +119,27 @@ export const typeDefs = gql`
   type Reading {
     _id: ID!
     userId: ID!
-    dateTime: String!
+    dateTime: DateTime!
     notes: String
     glucoseLevel: Int!
     readingTime: ReadingTiming!
-    foods: [ID]
+    foods: [Food]
     exercisedToday: Boolean!
     exerciseDetails: [ExerciseDetail]
-    medications: [ID]
+    medications: [Medication]
     createdAt: DateTime!
     updatedAt: DateTime!
+  }
+
+  type ReadingsGroupedByMeal {
+    Breakfast: [Reading]
+    Lunch: [Reading]
+    Dinner: [Reading]
+  }
+
+  type DashboardReadingsResult {
+    readingDate: String
+    readings: ReadingsGroupedByMeal
   }
 
   input RegisterInput {
@@ -209,6 +220,7 @@ export const typeDefs = gql`
 
     getReadingById(id: ID!): Reading
     getAllReadings: [Reading]
+    getTodaysOrLatestGroupedReadings: DashboardReadingsResult
 
     getUserSetupProgress: UserSetupProgress
   }

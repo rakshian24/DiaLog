@@ -3,6 +3,8 @@ import getLoggedInUserId from "../../middleware/getLoggedInUserId";
 import Reading, { IReading } from "../../models/Reading";
 import { IExerciseDetail, ReadingTiming } from "../../types";
 import { Types } from "mongoose";
+import dayjs from "dayjs";
+import { groupReadingsByMeal } from "../../utils";
 
 interface ReadingInput {
   dateTime: string;
@@ -13,6 +15,17 @@ interface ReadingInput {
   exercisedToday?: boolean;
   exerciseDetails?: IExerciseDetail[];
   medications?: Types.ObjectId[];
+}
+
+type GroupedReadings = {
+  Breakfast: IReading[];
+  Lunch: IReading[];
+  Dinner: IReading[];
+};
+
+interface DashboardReadingsResult {
+  readingDate: string;
+  readings: GroupedReadings;
 }
 
 const resolvers = {
@@ -52,7 +65,9 @@ const resolvers = {
         notes,
       });
 
-      const response = (await newReading.save()) as unknown as IReading;
+      const response = (
+        await (await newReading.save()).populate("foods")
+      ).populate("medications") as unknown as IReading;
 
       return response;
     },
@@ -103,6 +118,76 @@ const resolvers = {
       })) as unknown as IReading;
 
       return readings;
+    },
+
+    async getTodaysOrLatestGroupedReadings(
+      _: unknown,
+      __: {},
+      ctx: any
+    ): Promise<DashboardReadingsResult> {
+      const loggedInUserId = getLoggedInUserId(ctx);
+      const userId = loggedInUserId?.userId;
+
+      if (!userId) {
+        throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
+      }
+
+      const todayStart = dayjs().startOf("day").toDate();
+      const todayEnd = dayjs().endOf("day").toDate();
+
+      let readings = await Reading.find({
+        userId,
+        dateTime: { $gte: todayStart, $lte: todayEnd },
+      })
+        .populate("foods")
+        .populate("medications")
+        .lean();
+
+      let readingDate = "";
+
+      if (readings.length > 0) {
+        readingDate = dayjs().format("MMMM D, YYYY");
+      } else {
+        const latestReading = await Reading.findOne({ userId })
+          .sort({ dateTime: -1 })
+          .lean();
+
+        if (!latestReading) {
+          return {
+            readingDate: "",
+            readings: {
+              Breakfast: [],
+              Lunch: [],
+              Dinner: [],
+            },
+          };
+        }
+
+        const latestStart = dayjs(latestReading.dateTime)
+          .startOf("day")
+          .toDate();
+        const latestEnd = dayjs(latestReading.dateTime).endOf("day").toDate();
+        readingDate = dayjs(latestReading.dateTime).format("MMMM D, YYYY");
+
+        readings = await Reading.find({
+          userId,
+          dateTime: { $gte: latestStart, $lte: latestEnd },
+        })
+          .populate("foods")
+          .populate("medications")
+          .lean();
+      }
+
+      const cleanedReadings = (readings as unknown as IReading[]).map((r) => ({
+        ...r,
+        foods: (r.foods || []).filter((f) => f !== null),
+        medications: (r.medications || []).filter((m) => m !== null),
+      }));
+
+      return {
+        readingDate,
+        readings: groupReadingsByMeal(cleanedReadings as unknown as IReading[]),
+      };
     },
   },
 };

@@ -1,7 +1,7 @@
 import { LoadingButton, LoadingButtonProps } from "@mui/lab";
 import { MouseEventHandler, ReactElement } from "react";
-import { SxProps } from "@mui/material";
-import { colors } from "../constants";
+import { SxProps, useMediaQuery } from "@mui/material";
+import { colors, screenSize } from "../constants";
 
 export type ButtonProps = LoadingButtonProps & {
   styles?: SxProps;
@@ -26,26 +26,38 @@ const Button = ({
   dataTestId = "SubmitBtn",
   priority = "primary",
   ...props
-}: ButtonProps) => (
-  <LoadingButton
-    type="submit"
-    loading={isLoading}
-    disabled={disabled}
-    onClick={onClick}
-    variant={"contained"}
-    startIcon={startIcon}
-    endIcon={endIcon}
-    data-testid={dataTestId}
-    sx={{
-      ...{
-        fontSize: "16px",
-        borderRadius: 6,
+}: ButtonProps) => {
+  const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
+
+  const fontSize = isTablet ? "14px" : "16px";
+  const borderRadius = 2;
+  const defaultPadding = isTablet ? "8px 20px" : "10px 24px";
+  const paddingWithEndIcon = isTablet
+    ? "8px 14px 8px 20px"
+    : "10px 16px 10px 24px";
+  const paddingWithStartIcon = isTablet
+    ? "8px 20px 8px 14px"
+    : "10px 24px 10px 16px";
+
+  return (
+    <LoadingButton
+      type="submit"
+      loading={isLoading}
+      disabled={disabled}
+      onClick={onClick}
+      variant={"contained"}
+      startIcon={startIcon}
+      endIcon={endIcon}
+      data-testid={dataTestId}
+      sx={{
+        fontSize,
+        borderRadius,
         textTransform: "none",
         p: endIcon
-          ? "10px 16px 10px 24px"
+          ? paddingWithEndIcon
           : startIcon
-          ? "10px 24px 10px 16px"
-          : "10px 24px",
+          ? paddingWithStartIcon
+          : defaultPadding,
         boxShadow: "none",
         bgcolor:
           priority === "primary"
@@ -72,24 +84,22 @@ const Button = ({
               : colors.primary,
           boxShadow: "none",
           color:
-            priority === "primary" || "success"
+            priority === "primary" || priority === "success"
               ? colors.white
-              : priority === "secondary"
-              ? colors.primary
-              : colors.white,
+              : colors.primary,
         },
         "&:disabled": {
           bgcolor: priority === "primary" ? colors.primary : colors.white,
           color: priority === "primary" ? colors.white : colors.primary,
           opacity: 0.6,
         },
-      },
-      ...(styles && { ...styles }),
-    }}
-    {...props}
-  >
-    {buttonText}
-  </LoadingButton>
-);
+        ...(styles && { ...styles }),
+      }}
+      {...props}
+    >
+      {buttonText}
+    </LoadingButton>
+  );
+};
 
 export default Button;
