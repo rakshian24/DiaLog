@@ -38,7 +38,12 @@ const ProfileTab = ({ open, anchorEl, popperRef, handleClose }: Props) => {
   };
 
   return (
-    <Popper open={open} anchorEl={anchorEl} placement="bottom-end">
+    <Popper
+      open={open}
+      anchorEl={anchorEl}
+      placement="bottom-end"
+      sx={{ zIndex: 9999 }}
+    >
       <Paper
         ref={popperRef}
         sx={{ boxShadow: 3, mt: 1, mb: isTablet ? 1 : 0, width: "290px" }}

@@ -1,5 +1,7 @@
 import {
+  Box,
   Chip,
+  CircularProgress,
   MenuItem,
   Paper,
   Stack,
@@ -9,7 +11,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
-import { CSSProperties, KeyboardEvent, useState } from "react";
+import {
+  CSSProperties,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { colors } from "../constants";
 
 type Option = {
@@ -44,6 +52,24 @@ const CustomMultiSelectWithChips = ({
 }: Props) => {
   const [inputValue, setInputValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
@@ -52,14 +78,20 @@ const CustomMultiSelectWithChips = ({
       const existing = options.find((opt) => opt.name.toLowerCase() === name);
 
       let idToAdd = existing?.id;
-      if (!idToAdd && onNewItemCreate) {
-        idToAdd = await onNewItemCreate(name);
-      }
 
-      if (idToAdd && !value.includes(idToAdd)) {
-        setValue([...value, idToAdd]);
+      try {
+        setIsLoading(true);
+        if (!idToAdd && onNewItemCreate) {
+          idToAdd = await onNewItemCreate(name);
+        }
+
+        if (idToAdd && !value.includes(idToAdd)) {
+          setValue([...value, idToAdd]);
+        }
+      } finally {
+        setIsLoading(false);
+        setInputValue("");
       }
-      setInputValue("");
     }
   };
 
@@ -68,14 +100,20 @@ const CustomMultiSelectWithChips = ({
     const existing = options.find((opt) => opt.name.toLowerCase() === name);
 
     let idToAdd = existing?.id;
-    if (!idToAdd && onNewItemCreate) {
-      idToAdd = await onNewItemCreate(name);
-    }
 
-    if (idToAdd && !value.includes(idToAdd)) {
-      setValue([...value, idToAdd]);
+    try {
+      setIsLoading(true);
+      if (!idToAdd && onNewItemCreate) {
+        idToAdd = await onNewItemCreate(name);
+      }
+
+      if (idToAdd && !value.includes(idToAdd)) {
+        setValue([...value, idToAdd]);
+      }
+      setShowDropdown(false);
+    } finally {
+      setIsLoading(false);
     }
-    setShowDropdown(false);
   };
 
   const handleDelete = (id: string) => {
@@ -83,7 +121,7 @@ const CustomMultiSelectWithChips = ({
   };
 
   return (
-    <Stack sx={{ position: "relative", ...styles }} gap={1}>
+    <Stack ref={wrapperRef} sx={{ position: "relative", ...styles }} gap={1}>
       <TextField
         fullWidth
         variant="filled"
@@ -92,9 +130,15 @@ const CustomMultiSelectWithChips = ({
         onChange={(e) => setInputValue(e.target.value)}
         onFocus={() => setShowDropdown(true)}
         onKeyDown={handleKeyDown}
+        autoComplete=""
         InputProps={{
           disableUnderline: true,
-          endAdornment: (
+          endAdornment: isLoading ? (
+            <CircularProgress
+              size={18}
+              sx={{ color: colors.contentTertiary }}
+            />
+          ) : (
             <ExpandMoreIcon
               onClick={() => setShowDropdown(!showDropdown)}
               style={{
@@ -147,19 +191,46 @@ const CustomMultiSelectWithChips = ({
             overflowY: "auto",
             borderRadius: 2,
             mt: 0.5,
+            bgcolor: "#F5FAFF",
           }}
         >
-          {options
-            .filter((opt) => !value.includes(opt.id))
-            .map((opt) => (
-              <MenuItem
-                key={opt.id}
-                onClick={() => handleSelect(opt.name)}
-                sx={{ fontSize: "14px" }}
-              >
-                {opt.name}
-              </MenuItem>
-            ))}
+          {isLoading ? (
+            <MenuItem disabled sx={{ fontStyle: "italic", fontSize: "13px" }}>
+              Loading...
+            </MenuItem>
+          ) : options.filter((opt) => !value.includes(opt.id)).length === 0 ? (
+            <MenuItem
+              disabled
+              sx={{ fontStyle: "italic", fontSize: "13px", color: "#64748b" }}
+            >
+              {options.length === 0
+                ? "No foods available. Please create one."
+                : "You have selected all the foods. Create more."}
+            </MenuItem>
+          ) : (
+            options
+              .filter((opt) => !value.includes(opt.id))
+              .map((opt, index, arr) => (
+                <Box key={opt.id}>
+                  <MenuItem
+                    onClick={() => handleSelect(opt.name)}
+                    sx={{ fontSize: "14px" }}
+                  >
+                    {opt.name}
+                  </MenuItem>
+                  {index < arr.length - 1 && (
+                    <Box
+                      sx={{
+                        height: "1px",
+                        backgroundColor: "#E3E8EF",
+                        mx: 2,
+                        my: 0.5,
+                      }}
+                    />
+                  )}
+                </Box>
+              ))
+          )}
         </Paper>
       )}
 

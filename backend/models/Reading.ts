@@ -107,6 +107,7 @@ readingSchema.pre("validate", async function (next) {
   try {
     const requiredMeds = await Medication.find({
       readingTime: reading.readingTime,
+      userId: reading.userId,
     });
 
     if (

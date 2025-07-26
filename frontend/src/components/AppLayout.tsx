@@ -63,6 +63,7 @@ export const AppLayout = () => {
           flexGrow: 1,
           bgcolor: colors.lightGrey1,
           p: isTablet ? 2 : 3,
+          pb: isTablet ? 6 : 0,
           height:
             !isTablet && !isCurrentPathNameOnboarding
               ? "calc(100vh - 120px)"

@@ -44,7 +44,7 @@ const DashboardReadingCard = ({ meal, readings, readingDate }: Props) => {
           {getIcon(meal)}
           <Typography fontWeight={600}>{meal}</Typography>
           <Typography variant="body2" color={colors.contentSecondary}>
-            ({getDayLabel(readingDate)})
+            {getDayLabel(readingDate) ? `(${getDayLabel(readingDate)})` : ""}
           </Typography>
         </Stack>
         <Typography variant="body2" color="text.secondary">

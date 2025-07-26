@@ -42,6 +42,7 @@ import {
 import { CustomInputField } from "../../components/CustomInputField";
 import CustomMultiSelectWithChips from "../../components/CustomMultiSelectWithChips";
 import MedicationList from "../../components/MedicationList";
+import Skeleton from "./Skeleton";
 
 const AddReading = () => {
   const [open, setOpen] = useState(true);
@@ -70,7 +71,7 @@ const AddReading = () => {
   const { data: medicationsData, loading: isMedicationsDataLoading } =
     useQuery(GET_ALL_MEDICATIONS);
 
-  if (isFoodsDataLoading || isMedicationsDataLoading) return <p>Loading...</p>;
+  if (isFoodsDataLoading || isMedicationsDataLoading) return <Skeleton />;
 
   const foods: Food[] = foodsData?.getAllFoods || [];
   const medications: Medication[] = medicationsData?.getAllMedications || [];
@@ -83,6 +84,10 @@ const AddReading = () => {
     setOpen(false);
     navigate(ROUTES.DASHBOARD);
   };
+
+  const requiresFood =
+    selectedReadingTime &&
+    readingTimesRequiringFoodInput.includes(selectedReadingTime);
 
   const onSubmitHandler = async (formValues: IAddReadingFormValueTypes) => {
     setIsLoading(true);
@@ -257,14 +262,44 @@ const AddReading = () => {
                   />
                 )}
               />
+            </Stack>
 
-              <Typography
-                fontSize={16}
-                fontWeight={500}
-                pl={0.5}
-                mb={0.5}
-                mt={2.5}
-              >
+            {requiresFood && (
+              <Stack gap={0.5}>
+                <Typography fontSize={16} fontWeight={500} pl={0.5}>
+                  What did you have for{" "}
+                  {readingTimingLabels[selectedReadingTime].split(" ")[1]}?
+                </Typography>
+                <CustomMultiSelectWithChips
+                  value={foodItems}
+                  setValue={setFoodItems}
+                  placeholder="Enter or select food(s)"
+                  options={foods.map((food) => ({
+                    id: food._id,
+                    name: food.name,
+                  }))}
+                  onNewItemCreate={async (newFoodName) => {
+                    try {
+                      const { data } = await addFood({
+                        variables: { input: { name: newFoodName } },
+                        refetchQueries: [{ query: GET_ALL_FOODS }],
+                      });
+                      return data?.addFood?._id;
+                    } catch (error) {
+                      console.error("Failed to create food:", error);
+                      return "";
+                    }
+                  }}
+                  chipSx={{
+                    bgcolor: colors.primaryBg,
+                    color: colors.primary,
+                  }}
+                />
+              </Stack>
+            )}
+
+            <Stack gap={1}>
+              <Typography fontSize={16} fontWeight={500} pl={0.5}>
                 Notes (optional)
               </Typography>
               <Controller
@@ -288,41 +323,6 @@ const AddReading = () => {
                 )}
               />
             </Stack>
-
-            {selectedReadingTime &&
-              readingTimesRequiringFoodInput.includes(selectedReadingTime) && (
-                <Stack gap={0.5}>
-                  <Typography fontSize={16} fontWeight={500} pl={0.5}>
-                    What did you have for{" "}
-                    {readingTimingLabels[selectedReadingTime].split(" ")[1]}?
-                  </Typography>
-                  <CustomMultiSelectWithChips
-                    value={foodItems}
-                    setValue={setFoodItems}
-                    placeholder="Enter or select food(s)"
-                    options={foods.map((food) => ({
-                      id: food._id,
-                      name: food.name,
-                    }))}
-                    onNewItemCreate={async (newFoodName) => {
-                      try {
-                        const { data } = await addFood({
-                          variables: { input: { name: newFoodName } },
-                          refetchQueries: [{ query: GET_ALL_FOODS }],
-                        });
-                        return data?.addFood?._id;
-                      } catch (error) {
-                        console.error("Failed to create food:", error);
-                        return "";
-                      }
-                    }}
-                    chipSx={{
-                      bgcolor: colors.primaryBg,
-                      color: colors.primary,
-                    }}
-                  />
-                </Stack>
-              )}
 
             {/* Add Exercise details later */}
 
