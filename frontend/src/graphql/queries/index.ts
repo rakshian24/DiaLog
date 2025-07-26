@@ -172,3 +172,36 @@ export const GET_TODAYS_OR_LATEST_READINGS = gql`
   }
   ${READING_FIELDS}
 `;
+
+export const GET_READINGS_BY_FILTER = gql`
+  query GetReadingsByFilter(
+    $fromDate: String!
+    $toDate: String!
+    $readingTimes: [ReadingTiming!]!
+  ) {
+    getReadingsByFilter(
+      fromDate: $fromDate
+      toDate: $toDate
+      readingTimes: $readingTimes
+    ) {
+      averageGlucoseLevel
+      highestGlucoseLevel
+      lowestGlucoseLevel
+      readings {
+        date
+        readings {
+          Morning {
+            ...ReadingFields
+          }
+          Afternoon {
+            ...ReadingFields
+          }
+          Evening {
+            ...ReadingFields
+          }
+        }
+      }
+    }
+  }
+  ${READING_FIELDS}
+`;

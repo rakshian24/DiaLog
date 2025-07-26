@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/material";
 import TrackingPreferences from "./TrackingPreference";
 import { GET_USER_SETUP_PROGRESS } from "../../graphql/queries";
 import { useQuery } from "@apollo/client";
@@ -6,10 +6,12 @@ import SetupProgressBar from "../../components/SetupProgressBar";
 import { SetupSteps } from "../../types";
 import MedicationOnboarding from "../../components/MedicationOnboarding";
 import { useEffect } from "react";
-import { ROUTES } from "../../constants";
+import { ROUTES, screenSize } from "../../constants";
 import { useNavigate } from "react-router-dom";
 
 const InitSetup = () => {
+  const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
+
   const { data, loading } = useQuery(GET_USER_SETUP_PROGRESS);
   const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ const InitSetup = () => {
   }
 
   return (
-    <Stack gap={3} p={2}>
+    <Stack gap={3} p={2} pb={isTablet ? 6 : 0}>
       <SetupProgressBar progress={progress} />
       {!isTrackingPreferenceStepCompleted && <TrackingPreferences />}
       {isTrackingPreferenceStepCompleted && !isMedicationStepCompleted && (

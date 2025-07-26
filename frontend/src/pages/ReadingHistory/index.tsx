@@ -5,19 +5,32 @@ import {
   MenuItem,
   SelectChangeEvent,
   Chip,
+  useMediaQuery,
 } from "@mui/material";
-import { useRef, useState } from "react";
-import { colors } from "../../constants";
+import { useEffect, useRef, useState } from "react";
+import { colors, ISO_DATE_FORMAT2, screenSize } from "../../constants";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import CustomDatePicker from "../../components/CustomDatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import { ReadingTiming } from "../../types";
+import { ReadingsByFilterResponse, ReadingTiming } from "../../types";
 import CustomMultiSelect from "../../components/CustomMultiSelect";
-import { getDateRangeFromFilter, readingTimingLabels } from "../../utils";
+import {
+  getDateRangeFromFilter,
+  readingTimingLabels,
+  stripTypename,
+} from "../../utils";
 import Button from "../../components/CustomButton";
+import { GET_READINGS_BY_FILTER } from "../../graphql/queries";
+import { useLazyQuery } from "@apollo/client";
+import Skeleton from "./Skeleton";
+import ReadingHistoryBody from "./ReadingHistoryBody";
+import NoReadingHistory from "./NoReadingHistory";
 
 const ReadingHistory = () => {
+  const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
+
   const allMealTimes = Object.values(ReadingTiming);
+  const [isLoading, setIsLoading] = useState(false);
   const selectedFilterRef = useRef("Last 7 days");
   const [selectedFilter, setSelectedFilter] = useState(
     selectedFilterRef.current
@@ -26,6 +39,35 @@ const ReadingHistory = () => {
   const [toDate, setToDate] = useState<Dayjs | null>(dayjs());
   const [readingTimes, setReadingTimes] =
     useState<ReadingTiming[]>(allMealTimes);
+
+  const [
+    triggerFilterQuery,
+    { data: readingsByFilterData, loading: isReadingsByFilterDataLoading },
+  ] = useLazyQuery(GET_READINGS_BY_FILTER);
+
+  const readingsData: ReadingsByFilterResponse =
+    readingsByFilterData?.getReadingsByFilter || {};
+
+  const readings = stripTypename(readingsData);
+
+  const hasReadings = readings?.readings?.length > 0;
+
+  useEffect(() => {
+    const defaultFrom = dayjs().subtract(6, "day");
+    const defaultTo = dayjs();
+
+    setFromDate(defaultFrom);
+    setToDate(defaultTo);
+
+    setIsLoading(true);
+    triggerFilterQuery({
+      variables: {
+        fromDate: defaultFrom.format(ISO_DATE_FORMAT2),
+        toDate: defaultTo.format(ISO_DATE_FORMAT2),
+        readingTimes: allMealTimes,
+      },
+    }).finally(() => setIsLoading(false));
+  }, []);
 
   const filters = ["Last 7 days", "Last month", "This month", "Custom date"];
 
@@ -36,21 +78,59 @@ const ReadingHistory = () => {
 
   const handleApplyFilter = () => {
     const currentFilter = selectedFilterRef.current;
-    console.log("Filter:", currentFilter);
+
+    let finalFromDate = fromDate;
+    let finalToDate = toDate;
 
     if (currentFilter !== "Custom date") {
-      const { fromDate, toDate } = getDateRangeFromFilter(currentFilter);
-      setFromDate(fromDate);
-      setToDate(toDate);
+      const { fromDate: newFrom, toDate: newTo } =
+        getDateRangeFromFilter(currentFilter);
+      setFromDate(newFrom);
+      setToDate(newTo);
+      finalFromDate = newFrom;
+      finalToDate = newTo;
+    }
 
-      console.log("From:", fromDate?.format("YYYY-MM-DD"));
-      console.log("To:", toDate?.format("YYYY-MM-DD"));
-      console.log("Meal times:", readingTimes);
+    if (finalFromDate && finalToDate) {
+      setIsLoading(true);
+      triggerFilterQuery({
+        variables: {
+          fromDate: finalFromDate.format(ISO_DATE_FORMAT2),
+          toDate: finalToDate.format(ISO_DATE_FORMAT2),
+          readingTimes,
+        },
+      }).finally(() => setIsLoading(false));
     }
   };
 
+  const handleResetFilters = () => {
+    const defaultFrom = dayjs().subtract(6, "day");
+    const defaultTo = dayjs();
+
+    setSelectedFilter("Last 7 days");
+    selectedFilterRef.current = "Last 7 days";
+
+    setFromDate(defaultFrom);
+    setToDate(defaultTo);
+    setReadingTimes(allMealTimes);
+
+    setIsLoading(true);
+    triggerFilterQuery({
+      variables: {
+        fromDate: defaultFrom.format(ISO_DATE_FORMAT2),
+        toDate: defaultTo.format(ISO_DATE_FORMAT2),
+        readingTimes: allMealTimes,
+      },
+    }).finally(() => setIsLoading(false));
+  };
+
+  const shouldShowSkeleton =
+    Object.keys(readings).length === 0 ||
+    isLoading ||
+    isReadingsByFilterDataLoading;
+
   return (
-    <Stack>
+    <Stack bgcolor={"#FEF9EF"} pb={isTablet ? 6 : 0}>
       <Stack
         gap={2}
         bgcolor={colors.white}
@@ -63,7 +143,12 @@ const ReadingHistory = () => {
           justifyContent={"space-between"}
         >
           <Typography fontWeight={500}>Filters</Typography>
-          <Typography fontWeight={500} color={colors.primary}>
+          <Typography
+            fontWeight={500}
+            color={colors.primary}
+            sx={{ cursor: "pointer" }}
+            onClick={handleResetFilters}
+          >
             Reset
           </Typography>
         </Stack>
@@ -159,7 +244,6 @@ const ReadingHistory = () => {
                   </Typography>
                 );
               }
-
               if (selected.length === allMealTimes.length) {
                 return (
                   <Typography
@@ -205,8 +289,18 @@ const ReadingHistory = () => {
         </Stack>
         <Button buttonText="Apply filters" onClick={handleApplyFilter} />
       </Stack>
-      <Stack bgcolor={"#FEF9EF"} p={2}>
-        Filter body
+      <Stack p={2} height={"100%"}>
+        {shouldShowSkeleton ? (
+          <Skeleton sx={{ bgcolor: "#F5EFE1" }} />
+        ) : (
+          <>
+            {hasReadings ? (
+              <ReadingHistoryBody readings={readings} />
+            ) : (
+              <NoReadingHistory handleFilter={handleResetFilters} />
+            )}
+          </>
+        )}
       </Stack>
     </Stack>
   );

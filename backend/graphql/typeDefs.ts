@@ -144,6 +144,24 @@ export const typeDefs = gql`
     readings: ReadingsGroupedByMeal
   }
 
+  type FilteredReadingGroup {
+    Morning: [Reading]
+    Afternoon: [Reading]
+    Evening: [Reading]
+  }
+
+  type ReadingDateGroup {
+    date: String
+    readings: FilteredReadingGroup
+  }
+
+  type AllReadingsResponse {
+    averageGlucoseLevel: Int
+    highestGlucoseLevel: Int
+    lowestGlucoseLevel: Int
+    readings: [ReadingDateGroup]
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -223,6 +241,11 @@ export const typeDefs = gql`
     getReadingById(id: ID!): Reading
     getAllReadings: [Reading]
     getTodaysOrLatestGroupedReadings: DashboardReadingsResult
+    getReadingsByFilter(
+      fromDate: String!
+      toDate: String!
+      readingTimes: [ReadingTiming!]!
+    ): AllReadingsResponse!
 
     getUserSetupProgress: UserSetupProgress
   }

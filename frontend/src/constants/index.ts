@@ -70,6 +70,7 @@ export const colors = {
 };
 
 export const ISO_DATE_FORMAT = "DD-MMM-YYYY";
+export const ISO_DATE_FORMAT2 = "YYYY-MM-DD";
 
 export const medicationColors = {
   taken: {
