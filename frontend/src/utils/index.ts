@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import {
   GroupedReadings,
   PmtTrackingOption,
@@ -259,4 +259,36 @@ export const getAverageGlucoseStyle = (
     label: `Average: ${averageGlucoseLevel} mg/dL`,
     borderColor: colors.dangerBorder,
   };
+};
+
+export const getDateRangeFromFilter = (
+  selectedFilter: string
+): { fromDate: Dayjs; toDate: Dayjs } => {
+  const today = dayjs();
+
+  switch (selectedFilter) {
+    case "Last 7 days":
+      return {
+        toDate: today,
+        fromDate: today.subtract(6, "day"),
+      };
+
+    case "Last month":
+      return {
+        toDate: today,
+        fromDate: today.subtract(1, "month").startOf("month"),
+      };
+
+    case "This month":
+      return {
+        fromDate: today.startOf("month"),
+        toDate: today,
+      };
+
+    default:
+      return {
+        fromDate: today,
+        toDate: today,
+      };
+  }
 };

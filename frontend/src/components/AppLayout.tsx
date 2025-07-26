@@ -22,6 +22,7 @@ export const AppLayout = () => {
   const { pathname } = useLocation();
 
   const isCurrentPathNameOnboarding = pathname === ROUTES.ONBOARDING;
+  const isCurrentPathNameHistory = pathname === ROUTES.READING_HISTORY;
 
   const { data: setupProgressData, loading: isSetupProgressDataLoading } =
     useQuery(GET_USER_SETUP_PROGRESS);
@@ -61,8 +62,7 @@ export const AppLayout = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: colors.lightGrey1,
-          p: isTablet ? 2 : 3,
+          bgcolor: isCurrentPathNameHistory ? colors.white : colors.lightGrey1,
           pb: isTablet ? 6 : 0,
           height:
             !isTablet && !isCurrentPathNameOnboarding

@@ -1,6 +1,7 @@
 import { CSSProperties } from "react";
-import { Stack, SxProps, Typography } from "@mui/material";
+import { InputAdornment, Stack, SxProps, Typography } from "@mui/material";
 import {
+  CalendarIcon,
   DatePicker,
   DatePickerProps,
   LocalizationProvider,
@@ -17,6 +18,8 @@ type Props = DatePickerProps<Dayjs> & {
   dataTestId?: string;
   error?: boolean;
   popperSx?: SxProps<Theme>;
+  minDate?: Dayjs;
+  maxDate?: Dayjs;
 };
 
 const CustomDatePicker = ({
@@ -27,6 +30,8 @@ const CustomDatePicker = ({
   label,
   error,
   popperSx = {},
+  minDate,
+  maxDate,
   ...props
 }: Props) => (
   <Stack
@@ -38,6 +43,8 @@ const CustomDatePicker = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
         format={ISO_DATE_FORMAT}
+        minDate={minDate}
+        maxDate={maxDate}
         {...props}
         slotProps={{
           ...(popperSx && {
@@ -73,6 +80,11 @@ const CustomDatePicker = ({
                 backgroundColor: error ? colors.lightRed : colors.grey3,
                 ...(inputStyles && { ...inputStyles }),
               },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <CalendarIcon sx={{ color: colors.grey1 }} />
+                </InputAdornment>
+              ),
             },
           },
         }}

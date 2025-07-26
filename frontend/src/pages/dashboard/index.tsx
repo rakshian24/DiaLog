@@ -41,13 +41,13 @@ const Dashboard = () => {
     cleanedReadingData.readings
   );
 
-  const { bgColor, textColor, label, borderColor } = getAverageGlucoseStyle(
+  const { bgColor, textColor, label } = getAverageGlucoseStyle(
     isTodaysReading,
     averageGlucoseLevel
   );
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} padding={2}>
       <Stack
         direction={"row"}
         alignItems={"center"}

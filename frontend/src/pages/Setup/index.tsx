@@ -9,9 +9,7 @@ import { useEffect } from "react";
 import { ROUTES } from "../../constants";
 import { useNavigate } from "react-router-dom";
 
-type Props = {};
-
-const InitSetup = (props: Props) => {
+const InitSetup = () => {
   const { data, loading } = useQuery(GET_USER_SETUP_PROGRESS);
   const navigate = useNavigate();
 
@@ -35,7 +33,7 @@ const InitSetup = (props: Props) => {
   }
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} p={2}>
       <SetupProgressBar progress={progress} />
       {!isTrackingPreferenceStepCompleted && <TrackingPreferences />}
       {isTrackingPreferenceStepCompleted && !isMedicationStepCompleted && (
