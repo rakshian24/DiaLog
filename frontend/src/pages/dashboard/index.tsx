@@ -8,6 +8,7 @@ import { DashboardGroupedReadings } from "../../types";
 import { isToday, stripTypename } from "../../utils";
 import DashbordReading from "./DashbordReading";
 import DashboardSkeleton from "./DashboardSkeleton";
+import ReadingColorGuide from "../../components/ReadingColorGuide";
 
 const Dashboard = () => {
   const {
@@ -61,6 +62,7 @@ const Dashboard = () => {
           {isTodaysReading ? "Average: 110 mg/dL" : "No data today"}
         </Stack>
       </Stack>
+      <ReadingColorGuide />
       {hasReadings ? (
         <DashbordReading
           readingsData={cleanedReadingData}
