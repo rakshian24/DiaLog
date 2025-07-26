@@ -65,4 +65,17 @@ export const colors = {
 
 export const ISO_DATE_FORMAT = "DD-MMM-YYYY";
 
-export const INDIAN_RUPEE_SYMBOL = "₹";
+export const medicationColors = {
+  taken: {
+    bg: "#F1FDF4",
+    border: "#DCFCE7",
+    icon: "#13A34A",
+    text: "#13A34A",
+  },
+  missed: {
+    bg: "#FEF2F2",
+    border: "#FECACA",
+    icon: "#DC2627",
+    text: "#DC2627",
+  },
+};

@@ -129,6 +129,8 @@ export const typeDefs = gql`
     medications: [Medication]
     createdAt: DateTime!
     updatedAt: DateTime!
+    requiredMedications: [Medication]
+    missedMedications: [Medication]
   }
 
   type ReadingsGroupedByMeal {

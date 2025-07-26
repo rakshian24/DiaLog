@@ -1,22 +1,26 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import Medication from "./Medication";
 import { IExerciseDetail, ReadingTiming } from "../types";
 
+const ObjectId = mongoose.Types.ObjectId;
+
 export interface IReading extends Document {
-  userId: Types.ObjectId;
-  dateTime: string;
+  userId: mongoose.Types.ObjectId;
+  dateTime: Date;
   glucoseLevel: number;
   readingTime: ReadingTiming;
-  foods?: Types.ObjectId[];
+  foods?: mongoose.Types.ObjectId[];
   exercisedToday?: boolean;
   exerciseDetails?: IExerciseDetail[];
-  medications?: Types.ObjectId[];
+  medications?: mongoose.Types.ObjectId[];
   notes?: string;
+  requiredMedications?: mongoose.Types.ObjectId[];
+  missedMedications?: mongoose.Types.ObjectId[];
 }
 
-const readingSchema = new Schema(
+const readingSchema = new Schema<IReading>(
   {
-    userId: { type: Types.ObjectId, ref: "User", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     dateTime: { type: Date, required: true },
     notes: { type: String },
     glucoseLevel: { type: Number, required: true },
@@ -27,7 +31,7 @@ const readingSchema = new Schema(
     },
     foods: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Food",
         required: false,
       },
@@ -38,13 +42,31 @@ const readingSchema = new Schema(
     },
     exerciseDetails: [
       {
-        exerciseId: { type: Types.ObjectId, ref: "Exercise", required: true },
+        exerciseId: {
+          type: Schema.Types.ObjectId,
+          ref: "Exercise",
+          required: true,
+        },
         durationMinutes: { type: Number, required: true },
       },
     ],
     medications: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
+        ref: "Medication",
+        required: false,
+      },
+    ],
+    requiredMedications: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Medication",
+        required: false,
+      },
+    ],
+    missedMedications: [
+      {
+        type: Schema.Types.ObjectId,
         ref: "Medication",
         required: false,
       },
@@ -56,10 +78,9 @@ const readingSchema = new Schema(
 );
 
 readingSchema.pre("validate", async function (next) {
-  const reading = this;
+  const reading = this as unknown as IReading;
 
-  // 1. Restrict duplicate readingTime for same user & day
-  const readingDate = new Date(reading.dateTime).toISOString().split("T")[0]; // Get just YYYY-MM-DD
+  const readingDate = new Date(reading.dateTime).toISOString().split("T")[0];
 
   const existing = await Reading.findOne({
     userId: reading.userId,
@@ -68,7 +89,7 @@ readingSchema.pre("validate", async function (next) {
       $gte: new Date(`${readingDate}T00:00:00.000Z`),
       $lte: new Date(`${readingDate}T23:59:59.999Z`),
     },
-    _id: { $ne: reading._id }, // Exclude current if updating
+    _id: { $ne: reading._id },
   });
 
   if (existing) {
@@ -79,7 +100,6 @@ readingSchema.pre("validate", async function (next) {
     );
   }
 
-  // 2. Validate food for after-meal
   const isAfterMeal =
     reading.readingTime === ReadingTiming.AFTER_BREAKFAST ||
     reading.readingTime === ReadingTiming.AFTER_LUNCH ||
@@ -92,7 +112,6 @@ readingSchema.pre("validate", async function (next) {
     );
   }
 
-  // 3. Validate exercise details if exercisedToday is true
   if (
     reading.exercisedToday === true &&
     (!reading.exerciseDetails || reading.exerciseDetails.length === 0)
@@ -103,30 +122,33 @@ readingSchema.pre("validate", async function (next) {
     );
   }
 
-  // 4. Medication Validation
   try {
     const requiredMeds = await Medication.find({
       readingTime: reading.readingTime,
       userId: reading.userId,
     });
 
-    if (
-      requiredMeds.length > 0 &&
-      (!reading.medications || reading.medications.length === 0)
-    ) {
-      reading.invalidate(
-        "medications",
-        `Medication(s) are required for "${reading.readingTime}" reading based on your prescribed plan`
+    if (requiredMeds.length === 0) {
+      reading.requiredMedications = [];
+      reading.missedMedications = [];
+    } else {
+      const requiredMedIds = requiredMeds.map((med) => med._id.toString());
+      const takenMedIds = (reading.medications || []).map((m) => m.toString());
+
+      const missedMedIds = requiredMedIds.filter(
+        (id) => !takenMedIds.includes(id)
       );
+
+      reading.requiredMedications = requiredMeds.map((m) => m._id);
+      reading.missedMedications = missedMedIds.map((id) => new ObjectId(id));
     }
+
     next();
   } catch (err: any) {
     return next(err);
   }
-
-  next();
 });
 
-const Reading = mongoose.model("Reading", readingSchema);
+const Reading = mongoose.model<IReading>("Reading", readingSchema);
 
 export default Reading;

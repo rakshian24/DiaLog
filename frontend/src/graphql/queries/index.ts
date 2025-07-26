@@ -1,5 +1,72 @@
 import gql from "graphql-tag";
 
+// --- Fragments ---
+export const MEDICATION_FIELDS = gql`
+  fragment MedicationFields on Medication {
+    _id
+    name
+    type
+    dosage
+    dosageType
+    dosagePerReadingTime
+    timeTaken
+    readingTime
+    createdAt
+    updatedAt
+    userId
+  }
+`;
+
+export const FOOD_FIELDS = gql`
+  fragment FoodFields on Food {
+    _id
+    name
+    userId
+    createdAt
+    updatedAt
+  }
+`;
+
+export const EXERCISE_DETAIL_FIELDS = gql`
+  fragment ExerciseDetailFields on ExerciseDetail {
+    exerciseId
+    durationMinutes
+  }
+`;
+
+export const READING_FIELDS = gql`
+  fragment ReadingFields on Reading {
+    _id
+    userId
+    dateTime
+    notes
+    glucoseLevel
+    readingTime
+    exercisedToday
+    createdAt
+    updatedAt
+    foods {
+      ...FoodFields
+    }
+    medications {
+      ...MedicationFields
+    }
+    requiredMedications {
+      ...MedicationFields
+    }
+    missedMedications {
+      ...MedicationFields
+    }
+    exerciseDetails {
+      ...ExerciseDetailFields
+    }
+  }
+  ${FOOD_FIELDS}
+  ${MEDICATION_FIELDS}
+  ${EXERCISE_DETAIL_FIELDS}
+`;
+
+// --- Queries ---
 export const GET_ME = gql`
   query Me {
     me {
@@ -36,137 +103,54 @@ export const GET_USER_SETUP_PROGRESS = gql`
 export const GET_ALL_MEDICATIONS = gql`
   query GetAllMedications {
     getAllMedications {
-      _id
-      name
-      type
-      dosage
-      dosageType
-      timeTaken
-      readingTime
-      createdAt
-      updatedAt
-      userId
-      dosagePerReadingTime
+      ...MedicationFields
     }
   }
+  ${MEDICATION_FIELDS}
 `;
 
 export const GET_ALL_MEDICATIONS_BY_MEAL_TYPE = gql`
   query GetAllMedicationsByMealType {
     getAllMedicationsByMealType {
       BEFORE_BREAKFAST {
-        _id
-        name
-        type
-        dosage
-        dosageType
-        dosagePerReadingTime
-        timeTaken
-        readingTime
-        createdAt
-        updatedAt
-        userId
+        ...MedicationFields
       }
       AFTER_BREAKFAST {
-        _id
-        name
-        type
-        dosage
-        dosageType
-        dosagePerReadingTime
-        timeTaken
-        readingTime
-        createdAt
-        updatedAt
-        userId
+        ...MedicationFields
       }
       BEFORE_LUNCH {
-        _id
-        name
-        type
-        dosage
-        dosageType
-        dosagePerReadingTime
-        timeTaken
-        readingTime
-        createdAt
-        updatedAt
-        userId
+        ...MedicationFields
       }
       AFTER_LUNCH {
-        _id
-        name
-        type
-        dosage
-        dosageType
-        dosagePerReadingTime
-        timeTaken
-        readingTime
-        createdAt
-        updatedAt
-        userId
+        ...MedicationFields
       }
       BEFORE_DINNER {
-        _id
-        name
-        type
-        dosage
-        dosageType
-        dosagePerReadingTime
-        timeTaken
-        readingTime
-        createdAt
-        updatedAt
-        userId
+        ...MedicationFields
       }
       AFTER_DINNER {
-        _id
-        name
-        type
-        dosage
-        dosageType
-        dosagePerReadingTime
-        timeTaken
-        readingTime
-        createdAt
-        updatedAt
-        userId
+        ...MedicationFields
       }
     }
   }
+  ${MEDICATION_FIELDS}
 `;
 
 export const GET_ALL_READINGS = gql`
   query GetAllReadings {
     getAllReadings {
-      _id
-      userId
-      dateTime
-      glucoseLevel
-      readingTime
-      foods
-      exercisedToday
-      medications
-      createdAt
-      updatedAt
-      exerciseDetails {
-        exerciseId
-        durationMinutes
-      }
+      ...ReadingFields
     }
   }
+  ${READING_FIELDS}
 `;
 
 export const GET_ALL_FOODS = gql`
   query GetAllFoods {
     getAllFoods {
-      name
-      userId
-      createdAt
-      updatedAt
-      _id
+      ...FoodFields
     }
   }
+  ${FOOD_FIELDS}
 `;
 
 export const GET_TODAYS_OR_LATEST_READINGS = gql`
@@ -175,111 +159,16 @@ export const GET_TODAYS_OR_LATEST_READINGS = gql`
       readingDate
       readings {
         Breakfast {
-          _id
-          userId
-          dateTime
-          notes
-          glucoseLevel
-          readingTime
-          exercisedToday
-          createdAt
-          updatedAt
-          foods {
-            _id
-            name
-            userId
-            createdAt
-            updatedAt
-          }
-          exerciseDetails {
-            exerciseId
-            durationMinutes
-          }
-          medications {
-            _id
-            name
-            type
-            dosage
-            dosageType
-            dosagePerReadingTime
-            timeTaken
-            readingTime
-            createdAt
-            updatedAt
-            userId
-          }
+          ...ReadingFields
         }
         Lunch {
-          _id
-          userId
-          dateTime
-          notes
-          glucoseLevel
-          readingTime
-          exercisedToday
-          createdAt
-          updatedAt
-          foods {
-            _id
-            name
-            userId
-            createdAt
-            updatedAt
-          }
-          exerciseDetails {
-            exerciseId
-            durationMinutes
-          }
-          medications {
-            _id
-            name
-            type
-            dosage
-            dosageType
-            dosagePerReadingTime
-            timeTaken
-            readingTime
-            createdAt
-            updatedAt
-            userId
-          }
+          ...ReadingFields
         }
         Dinner {
-          _id
-          userId
-          dateTime
-          notes
-          glucoseLevel
-          readingTime
-          exercisedToday
-          createdAt
-          updatedAt
-          foods {
-            _id
-            name
-            userId
-            createdAt
-            updatedAt
-          }
-          exerciseDetails {
-            exerciseId
-            durationMinutes
-          }
-          medications {
-            _id
-            name
-            type
-            dosage
-            dosageType
-            dosagePerReadingTime
-            timeTaken
-            readingTime
-            createdAt
-            updatedAt
-            userId
-          }
+          ...ReadingFields
         }
       }
     }
   }
+  ${READING_FIELDS}
 `;
