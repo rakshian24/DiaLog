@@ -1,5 +1,11 @@
 import dayjs from "dayjs";
-import { PmtTrackingOption, ReadingTiming, TimeFrequency } from "../types";
+import {
+  GroupedReadings,
+  PmtTrackingOption,
+  ReadingTiming,
+  TimeFrequency,
+} from "../types";
+import { colors } from "../constants";
 
 export const textInputRegex =
   /^(?!\s+$)[~!\s@#$%^&*()_+=[\]{}|;':",./<>?a-zA-Z0-9-]+$/;
@@ -177,4 +183,80 @@ export const getMealTime = (
 
 export const isToday = (dateString: string): boolean => {
   return dayjs(dateString).isSame(dayjs(), "day");
+};
+
+export const calculateAverageGlucoseLevel = (
+  readings: GroupedReadings
+): number | null => {
+  if (!readings) return null;
+
+  const glucoseLevels: number[] = [];
+
+  Object.values(readings).forEach((mealReadings) => {
+    mealReadings.forEach((reading) => {
+      if (typeof reading.glucoseLevel === "number") {
+        glucoseLevels.push(reading.glucoseLevel);
+      }
+    });
+  });
+
+  if (glucoseLevels.length === 0) return null;
+
+  const total = glucoseLevels.reduce((sum, level) => sum + level, 0);
+  const average = total / glucoseLevels.length;
+
+  return Math.round(average);
+};
+
+export const getAverageGlucoseStyle = (
+  isTodaysReading: boolean,
+  averageGlucoseLevel: number | null | undefined
+): {
+  bgColor: string;
+  textColor: string;
+  label: string;
+  borderColor: string;
+} => {
+  if (!isTodaysReading || averageGlucoseLevel == null) {
+    return {
+      bgColor: colors.orangeBg1,
+      textColor: colors.orange,
+      label: "No data today",
+      borderColor: colors.orangeBg1Border,
+    };
+  }
+
+  if (averageGlucoseLevel < 90) {
+    return {
+      bgColor: colors.primaryBg,
+      textColor: colors.primary,
+      label: `Average: ${averageGlucoseLevel} mg/dL`,
+      borderColor: colors.primaryBorder,
+    };
+  }
+
+  if (averageGlucoseLevel <= 140) {
+    return {
+      bgColor: colors.successBg,
+      textColor: colors.success,
+      label: `Average: ${averageGlucoseLevel} mg/dL`,
+      borderColor: colors.successBorder,
+    };
+  }
+
+  if (averageGlucoseLevel <= 160) {
+    return {
+      bgColor: colors.warningBg,
+      textColor: colors.warning,
+      label: `Average: ${averageGlucoseLevel} mg/dL`,
+      borderColor: colors.warningBorder,
+    };
+  }
+
+  return {
+    bgColor: colors.dangerBg,
+    textColor: colors.danger,
+    label: `Average: ${averageGlucoseLevel} mg/dL`,
+    borderColor: colors.dangerBorder,
+  };
 };

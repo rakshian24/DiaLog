@@ -5,7 +5,12 @@ import NoReadings from "./NoReadings";
 import { colors } from "../../constants";
 import dayjs from "dayjs";
 import { DashboardGroupedReadings } from "../../types";
-import { isToday, stripTypename } from "../../utils";
+import {
+  calculateAverageGlucoseLevel,
+  getAverageGlucoseStyle,
+  isToday,
+  stripTypename,
+} from "../../utils";
 import DashbordReading from "./DashbordReading";
 import DashboardSkeleton from "./DashboardSkeleton";
 import ReadingColorGuide from "../../components/ReadingColorGuide";
@@ -32,6 +37,15 @@ const Dashboard = () => {
     todaysOrLatestReadings
   );
 
+  const averageGlucoseLevel = calculateAverageGlucoseLevel(
+    cleanedReadingData.readings
+  );
+
+  const { bgColor, textColor, label, borderColor } = getAverageGlucoseStyle(
+    isTodaysReading,
+    averageGlucoseLevel
+  );
+
   return (
     <Stack gap={3}>
       <Stack
@@ -47,22 +61,23 @@ const Dashboard = () => {
           >
             Today
           </Typography>
-          <Typography color={colors.black} fontWeight={"500"}>
+          <Typography color={colors.black} fontWeight={"500"} fontSize={14}>
             {dayjs().format("MMMM D, YYYY")}
           </Typography>
         </Stack>
         <Stack
-          bgcolor={isTodaysReading ? colors.primaryBg : colors.orangeBg1}
+          bgcolor={bgColor}
           py={1}
           px={2}
           borderRadius={2}
+          fontSize={14}
           fontWeight={"600"}
-          color={isTodaysReading ? colors.primary : colors.orange}
+          color={textColor}
         >
-          {isTodaysReading ? "Average: 110 mg/dL" : "No data today"}
+          {label}
         </Stack>
       </Stack>
-      <ReadingColorGuide />
+      {hasReadings && <ReadingColorGuide />}
       {hasReadings ? (
         <DashbordReading
           readingsData={cleanedReadingData}

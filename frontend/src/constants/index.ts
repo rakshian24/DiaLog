@@ -31,6 +31,7 @@ export const colors = {
   // App Pallette
   primary: "#4A90E2",
   primaryBg: "#EAF4FF",
+  primaryBorder: "#BAE6FD",
   blue: "#1C4ED8",
   blueBg: "#DBEAFE",
   yellow: "#FFB84D",
@@ -48,6 +49,7 @@ export const colors = {
   lightOrange2: "#FBE8CF",
   orangeBg: "#FFF8EF",
   orangeBg1: "#F9F3EB",
+  orangeBg1Border: "#FCD9B6",
   grey1: "#9CA3AF",
   grey1Bg: "#F3F4F6",
   grey2: "#D1D5DB",
@@ -57,10 +59,13 @@ export const colors = {
   lightGrey3: "#E5E7EB",
   success: "#13A34A",
   successBg: "#F1FDF4",
+  successBorder: "#BBF7D0",
   warning: "#F59E0C",
   warningBg: "#FFFBEB",
+  warningBorder: "#FDE68A",
   danger: "#EF4444",
   dangerBg: "#FEF2F2",
+  dangerBorder: "#FCA5A5",
 };
 
 export const ISO_DATE_FORMAT = "DD-MMM-YYYY";
