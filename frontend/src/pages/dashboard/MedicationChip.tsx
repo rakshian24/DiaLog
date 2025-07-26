@@ -1,10 +1,11 @@
 import { Stack, Typography } from "@mui/material";
-import { CheckOutlined, WarningOutlined } from "@mui/icons-material";
+import { CheckOutlined } from "@mui/icons-material";
 import { GiMedicines } from "react-icons/gi";
 import { BiSolidInjection } from "react-icons/bi";
 import { Medication, MedicationType, ReadingTiming } from "../../types";
 import { medicationColors } from "../../constants";
 import { useMemo } from "react";
+import { PiWarningFill } from "react-icons/pi";
 
 type Props = {
   med: Medication;
@@ -28,7 +29,7 @@ const MedicationChip = ({ med, type, readingTime }: Props) => {
   }, [isTablet, dosage, dosageType, dosagePerReadingTime, readingTime]);
 
   const IconComponent = isTablet ? GiMedicines : BiSolidInjection;
-  const StatusIcon = type === "taken" ? CheckOutlined : WarningOutlined;
+  const StatusIcon = type === "taken" ? CheckOutlined : PiWarningFill;
 
   return (
     <Stack
