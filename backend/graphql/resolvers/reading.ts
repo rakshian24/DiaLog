@@ -6,6 +6,7 @@ import { Types } from "mongoose";
 import dayjs from "dayjs";
 import { groupReadingsByMeal } from "../../utils";
 import Medication from "../../models/Medication";
+import { DATE_FORMAT } from "../../constants";
 
 interface ReadingInput {
   dateTime: string;
@@ -222,6 +223,85 @@ const resolvers = {
       return {
         readingDate,
         readings: groupReadingsByMeal(cleanedReadings as unknown as IReading[]),
+      };
+    },
+    getReadingsByFilter: async (
+      _: unknown,
+      {
+        fromDate,
+        toDate,
+        readingTimes,
+      }: { fromDate: string; toDate: string; readingTimes: ReadingTiming[] },
+      ctx: any
+    ): Promise<any> => {
+      const { userId } = getLoggedInUserId(ctx);
+      if (!userId)
+        throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
+
+      const from = dayjs(fromDate, DATE_FORMAT).startOf("day").toDate();
+      const to = dayjs(toDate, DATE_FORMAT).endOf("day").toDate();
+
+      const readings = await Reading.find({
+        userId,
+        dateTime: { $gte: from, $lte: to },
+        readingTime: { $in: readingTimes },
+      })
+        .populate("foods")
+        .populate("medications")
+        .populate("requiredMedications")
+        .populate("missedMedications")
+        .lean();
+
+      const glucoseValues: number[] = [];
+      const dateWiseMap: Record<string, any> = {};
+
+      const getMealLabel = (readingTime: ReadingTiming) => {
+        if (
+          readingTime === ReadingTiming.BEFORE_BREAKFAST ||
+          readingTime === ReadingTiming.AFTER_BREAKFAST
+        )
+          return "Morning";
+        if (
+          readingTime === ReadingTiming.BEFORE_LUNCH ||
+          readingTime === ReadingTiming.AFTER_LUNCH
+        )
+          return "Afternoon";
+        return "Evening";
+      };
+
+      for (const r of readings) {
+        const dateStr = dayjs(r.dateTime).format(DATE_FORMAT);
+        const label = getMealLabel(r.readingTime);
+        if (!dateWiseMap[dateStr]) {
+          dateWiseMap[dateStr] = { Morning: [], Afternoon: [], Evening: [] };
+        }
+        dateWiseMap[dateStr][label].push(r);
+        glucoseValues.push(r.glucoseLevel);
+      }
+
+      const formattedReadings = Object.entries(dateWiseMap)
+        .sort(([dateA], [dateB]) =>
+          dayjs(dateA, DATE_FORMAT).isBefore(dayjs(dateB, DATE_FORMAT))
+            ? 1
+            : -1
+        )
+        .map(([date, group]) => ({
+          date,
+          readings: group,
+        }));
+
+      return {
+        averageGlucoseLevel:
+          glucoseValues.length > 0
+            ? Math.round(
+                glucoseValues.reduce((a, b) => a + b, 0) / glucoseValues.length
+              )
+            : 0,
+        highestGlucoseLevel:
+          glucoseValues.length > 0 ? Math.max(...glucoseValues) : 0,
+        lowestGlucoseLevel:
+          glucoseValues.length > 0 ? Math.min(...glucoseValues) : 0,
+        readings: formattedReadings,
       };
     },
   },

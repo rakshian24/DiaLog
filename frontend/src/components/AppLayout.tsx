@@ -63,7 +63,6 @@ export const AppLayout = () => {
         sx={{
           flexGrow: 1,
           bgcolor: isCurrentPathNameHistory ? colors.white : colors.lightGrey1,
-          pb: isTablet ? 6 : 0,
           height:
             !isTablet && !isCurrentPathNameOnboarding
               ? "calc(100vh - 120px)"

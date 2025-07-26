@@ -107,3 +107,21 @@ export type DashboardGroupedReadings = {
   readings: GroupedReadings;
   readingDate: string;
 };
+
+export type FilteredReadingGroup = {
+  Morning: [Reading];
+  Afternoon: [Reading];
+  Evening: [Reading];
+};
+
+export type ReadingDateGroup = {
+  date: String;
+  readings: FilteredReadingGroup;
+};
+
+export type ReadingsByFilterResponse = {
+  averageGlucoseLevel: number;
+  highestGlucoseLevel: number;
+  lowestGlucoseLevel: number;
+  readings: [ReadingDateGroup];
+};

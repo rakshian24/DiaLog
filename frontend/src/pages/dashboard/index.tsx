@@ -1,13 +1,13 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, useMediaQuery } from "@mui/material";
 import { GET_TODAYS_OR_LATEST_READINGS } from "../../graphql/queries";
 import { useQuery } from "@apollo/client";
 import NoReadings from "./NoReadings";
-import { colors } from "../../constants";
+import { colors, screenSize } from "../../constants";
 import dayjs from "dayjs";
 import { DashboardGroupedReadings } from "../../types";
 import {
   calculateAverageGlucoseLevel,
-  getAverageGlucoseStyle,
+  getStyleBasedOnGlucoseLevel,
   isToday,
   stripTypename,
 } from "../../utils";
@@ -16,6 +16,7 @@ import DashboardSkeleton from "./DashboardSkeleton";
 import ReadingColorGuide from "../../components/ReadingColorGuide";
 
 const Dashboard = () => {
+  const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
   const {
     data: todayOrLatestReadingsData,
     loading: isTodayOrLatestReadingsDataLoading,
@@ -41,13 +42,13 @@ const Dashboard = () => {
     cleanedReadingData.readings
   );
 
-  const { bgColor, textColor, label } = getAverageGlucoseStyle(
+  const { bgColor, textColor, label } = getStyleBasedOnGlucoseLevel(
     isTodaysReading,
     averageGlucoseLevel
   );
 
   return (
-    <Stack gap={3} padding={2}>
+    <Stack gap={3} padding={2} pb={isTablet ? 6 : 0}>
       <Stack
         direction={"row"}
         alignItems={"center"}
