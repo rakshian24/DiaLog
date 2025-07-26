@@ -5,6 +5,7 @@ import { IExerciseDetail, ReadingTiming } from "../../types";
 import { Types } from "mongoose";
 import dayjs from "dayjs";
 import { groupReadingsByMeal } from "../../utils";
+import Medication from "../../models/Medication";
 
 interface ReadingInput {
   dateTime: string;
@@ -45,13 +46,24 @@ const resolvers = {
         },
       }: { input: ReadingInput },
       ctx: any
-    ): Promise<IReading> {
+    ): Promise<any> {
       const loggedInUserId = getLoggedInUserId(ctx);
       const authenticatedUserId = loggedInUserId?.userId;
 
       if (!authenticatedUserId) {
         throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
       }
+
+      const requiredMeds = await Medication.find({
+        readingTime,
+        userId: authenticatedUserId,
+      });
+
+      const takenMedIds = medications?.map((id) => id.toString()) || [];
+
+      const missedMeds = requiredMeds.filter(
+        (med) => !takenMedIds.includes(med._id.toString())
+      );
 
       const newReading = new Reading({
         dateTime,
@@ -63,13 +75,20 @@ const resolvers = {
         medications,
         userId: authenticatedUserId,
         notes,
+        requiredMedications: requiredMeds.map((m) => m._id),
+        missedMedications: missedMeds.map((m) => m._id),
       });
 
-      const response = (
-        await (await newReading.save()).populate("foods")
-      ).populate("medications") as unknown as IReading;
+      const savedReading = await newReading.save();
 
-      return response;
+      const populatedReading = await Reading.findById(savedReading._id)
+        .populate("foods")
+        .populate("medications")
+        .populate("requiredMedications")
+        .populate("missedMedications")
+        .lean();
+
+      return populatedReading;
     },
   },
   Query: {
@@ -92,7 +111,12 @@ const resolvers = {
       const reading = await Reading.findOne({
         _id: args.id,
         userId,
-      });
+      })
+        .populate("foods")
+        .populate("medications")
+        .populate("requiredMedications")
+        .populate("missedMedications")
+        .lean();
 
       if (!reading) {
         throw new ApolloError("Reading not found", "NOT_FOUND");
@@ -101,11 +125,7 @@ const resolvers = {
       return reading as unknown as IReading;
     },
 
-    async getAllReadings(
-      _: unknown,
-      args: {},
-      ctx: any
-    ): Promise<IReading | null> {
+    async getAllReadings(_: unknown, args: {}, ctx: any): Promise<IReading[]> {
       const loggedInUserId = getLoggedInUserId(ctx);
       const userId = loggedInUserId?.userId;
 
@@ -113,11 +133,16 @@ const resolvers = {
         throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
       }
 
-      const readings = (await Reading.find({
+      const readings = await Reading.find({
         userId,
-      })) as unknown as IReading;
+      })
+        .populate("foods")
+        .populate("medications")
+        .populate("requiredMedications")
+        .populate("missedMedications")
+        .lean();
 
-      return readings;
+      return readings as unknown as IReading[];
     },
 
     async getTodaysOrLatestGroupedReadings(
@@ -141,6 +166,8 @@ const resolvers = {
       })
         .populate("foods")
         .populate("medications")
+        .populate("requiredMedications")
+        .populate("missedMedications")
         .lean();
 
       let readingDate = "";
@@ -175,6 +202,8 @@ const resolvers = {
         })
           .populate("foods")
           .populate("medications")
+          .populate("requiredMedications")
+          .populate("missedMedications")
           .lean();
       }
 
@@ -182,6 +211,12 @@ const resolvers = {
         ...r,
         foods: (r.foods || []).filter((f) => f !== null),
         medications: (r.medications || []).filter((m) => m !== null),
+        requiredMedications: (r.requiredMedications || []).filter(
+          (m) => m !== null
+        ),
+        missedMedications: (r.missedMedications || []).filter(
+          (m) => m !== null
+        ),
       }));
 
       return {

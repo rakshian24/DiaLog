@@ -215,15 +215,8 @@ const AddReading = () => {
               />
             </Stack>
 
-            <Stack bgcolor={colors.lightGrey1} padding={2} borderRadius={2}>
-              <Typography fontSize={18} fontWeight={500} pl={0.5} mb={1.25}>
-                {selectedReadingTime
-                  ? readingTimingLabels[selectedReadingTime]
-                  : "Blood glucose"}{" "}
-                reading
-              </Typography>
-
-              <Typography fontSize={16} fontWeight={500} pl={0.5} mb={0.5}>
+            <Stack gap={1}>
+              <Typography fontSize={16} fontWeight={500} pl={0.5}>
                 Blood Glucose (mg/dL)
               </Typography>
               <Controller

@@ -86,13 +86,15 @@ export type Reading = {
   dateTime: string;
   notes: string;
   glucoseLevel: number;
-  readingTime: string;
+  readingTime: ReadingTiming;
   foods: Food[];
   exercisedToday: string;
   medications: Medication[];
   exerciseDetails: ExerciseDetails;
   createdAt: string;
   updatedAt: string;
+  requiredMedications: Medication[];
+  missedMedications: Medication[];
 };
 
 export type GroupedReadings = {
