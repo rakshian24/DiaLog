@@ -1,6 +1,14 @@
 import jwt from "jsonwebtoken";
 import { IReading } from "../models/Reading";
-import { GroupedReadings, ReadingTiming } from "../types";
+import {
+  GroupedReadings,
+  ReadingReportEntry,
+  ReadingTiming,
+  ReportDateEntry,
+  ReportMealTimings,
+} from "../types";
+import dayjs from "dayjs";
+import { DATE_FORMAT } from "../constants";
 
 export const generateToken = async (user: any): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -56,4 +64,69 @@ export const groupReadingsByMeal = (readings: IReading[]): GroupedReadings => {
   }
 
   return grouped;
+};
+
+export const groupReadingsForReport = (
+  readings: IReading[]
+): ReportDateEntry[] => {
+  const grouped: Record<string, Partial<ReportMealTimings>> = {};
+
+  readings.forEach((r) => {
+    const dateKey = dayjs(r.dateTime).format(DATE_FORMAT);
+
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = {};
+    }
+
+    const entry: ReadingReportEntry = {
+      glucoseLevel: r.glucoseLevel,
+      time: dayjs(r.dateTime).format("h:mm A"),
+      meals:
+        Array.isArray(r.foods) && r.foods.length > 0
+          ? r.foods.map((f: any) => (f.name ? f.name : "")).filter(Boolean)
+          : [],
+    };
+
+    switch (r.readingTime) {
+      case "BEFORE_BREAKFAST":
+        grouped[dateKey][ReadingTiming.BEFORE_BREAKFAST] = entry;
+        break;
+      case "AFTER_BREAKFAST":
+        grouped[dateKey][ReadingTiming.AFTER_BREAKFAST] = entry;
+        break;
+      case "BEFORE_LUNCH":
+        grouped[dateKey][ReadingTiming.BEFORE_LUNCH] = entry;
+        break;
+      case "AFTER_LUNCH":
+        grouped[dateKey][ReadingTiming.AFTER_LUNCH] = entry;
+        break;
+      case "BEFORE_DINNER":
+        grouped[dateKey][ReadingTiming.BEFORE_DINNER] = entry;
+        break;
+      case "AFTER_DINNER":
+        grouped[dateKey][ReadingTiming.AFTER_DINNER] = entry;
+        break;
+    }
+  });
+
+  return Object.entries(grouped).map(([date, readings]) => {
+    const finalReadings: ReportMealTimings = {
+      [ReadingTiming.BEFORE_BREAKFAST]:
+        readings[ReadingTiming.BEFORE_BREAKFAST] ?? null,
+      [ReadingTiming.AFTER_BREAKFAST]:
+        readings[ReadingTiming.AFTER_BREAKFAST] ?? null,
+      [ReadingTiming.BEFORE_LUNCH]:
+        readings[ReadingTiming.BEFORE_LUNCH] ?? null,
+      [ReadingTiming.AFTER_LUNCH]: readings[ReadingTiming.AFTER_LUNCH] ?? null,
+      [ReadingTiming.BEFORE_DINNER]:
+        readings[ReadingTiming.BEFORE_DINNER] ?? null,
+      [ReadingTiming.AFTER_DINNER]:
+        readings[ReadingTiming.AFTER_DINNER] ?? null,
+    };
+
+    return {
+      date: dayjs(date).format("MMMM D, YYYY"),
+      readings: finalReadings,
+    };
+  });
 };

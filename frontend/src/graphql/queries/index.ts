@@ -66,6 +66,14 @@ export const READING_FIELDS = gql`
   ${EXERCISE_DETAIL_FIELDS}
 `;
 
+export const READING_REPORT_ENTRY_FIELDS = gql`
+  fragment ReadingReportEntryFields on ReadingReportEntry {
+    glucoseLevel
+    time
+    meals
+  }
+`;
+
 // --- Queries ---
 export const GET_ME = gql`
   query Me {
@@ -204,4 +212,33 @@ export const GET_READINGS_BY_FILTER = gql`
     }
   }
   ${READING_FIELDS}
+`;
+
+export const GET_READINGS_FOR_REPORT = gql`
+  query GetReadingsForReport($fromDate: String!, $toDate: String!) {
+    getReadingsForReport(fromDate: $fromDate, toDate: $toDate) {
+      date
+      readings {
+        BEFORE_BREAKFAST {
+          ...ReadingReportEntryFields
+        }
+        AFTER_BREAKFAST {
+          ...ReadingReportEntryFields
+        }
+        BEFORE_LUNCH {
+          ...ReadingReportEntryFields
+        }
+        AFTER_LUNCH {
+          ...ReadingReportEntryFields
+        }
+        BEFORE_DINNER {
+          ...ReadingReportEntryFields
+        }
+        AFTER_DINNER {
+          ...ReadingReportEntryFields
+        }
+      }
+    }
+  }
+  ${READING_REPORT_ENTRY_FIELDS}
 `;

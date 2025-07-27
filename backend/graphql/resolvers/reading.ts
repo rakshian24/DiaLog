@@ -4,7 +4,7 @@ import Reading, { IReading } from "../../models/Reading";
 import { IExerciseDetail, ReadingTiming } from "../../types";
 import { Types } from "mongoose";
 import dayjs from "dayjs";
-import { groupReadingsByMeal } from "../../utils";
+import { groupReadingsByMeal, groupReadingsForReport } from "../../utils";
 import Medication from "../../models/Medication";
 import { DATE_FORMAT } from "../../constants";
 
@@ -281,9 +281,7 @@ const resolvers = {
 
       const formattedReadings = Object.entries(dateWiseMap)
         .sort(([dateA], [dateB]) =>
-          dayjs(dateA, DATE_FORMAT).isBefore(dayjs(dateB, DATE_FORMAT))
-            ? 1
-            : -1
+          dayjs(dateA, DATE_FORMAT).isBefore(dayjs(dateB, DATE_FORMAT)) ? 1 : -1
         )
         .map(([date, group]) => ({
           date,
@@ -303,6 +301,31 @@ const resolvers = {
           glucoseValues.length > 0 ? Math.min(...glucoseValues) : 0,
         readings: formattedReadings,
       };
+    },
+    getReadingsForReport: async (
+      _: unknown,
+      { fromDate, toDate }: { fromDate: string; toDate: string },
+      ctx: any
+    ): Promise<any> => {
+      const { userId } = getLoggedInUserId(ctx);
+      if (!userId)
+        throw new ApolloError("User not authenticated", "NOT_AUTHENTICATED");
+
+      const from = dayjs(fromDate, DATE_FORMAT).startOf("day").toDate();
+      const to = dayjs(toDate, DATE_FORMAT).endOf("day").toDate();
+
+      const readings = await Reading.find({
+        userId,
+        dateTime: { $gte: from, $lte: to },
+      })
+        .populate("foods")
+        .populate("medications")
+        .populate("requiredMedications")
+        .populate("missedMedications")
+        .sort({ dateTime: -1 })
+        .lean();
+
+      return groupReadingsForReport(readings as unknown as IReading[]);
     },
   },
 };
