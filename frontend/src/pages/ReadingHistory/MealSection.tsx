@@ -5,6 +5,7 @@ import {
   Box,
   Stack,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Reading } from "../../types";
@@ -13,6 +14,7 @@ import {
   AccordionStyles,
   AccordionSummaryStyles,
   colors,
+  screenSize,
 } from "../../constants";
 import dayjs from "dayjs";
 import { getStyleBasedOnGlucoseLevel, readingTimingLabels } from "../../utils";
@@ -30,6 +32,8 @@ const formatReadingTime = (readingTime: string) =>
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
 const MealSection = ({ title, readings }: Props) => {
+  const isMobile = useMediaQuery(`(max-width:${screenSize.mobile})`);
+
   const hasRequiredMeds = readings.some(
     (reading) =>
       reading.requiredMedications && reading.requiredMedications.length > 0
@@ -46,8 +50,10 @@ const MealSection = ({ title, readings }: Props) => {
         expandIcon={<ExpandMoreIcon />}
         sx={AccordionSummaryStyles}
       >
-        <Stack gap={1} width={"100%"} paddingRight={2}>
-          <Typography fontWeight={600}>{title}</Typography>
+        <Stack gap={1} width={"100%"} paddingRight={isMobile ? 0.5 : 2}>
+          <Typography fontWeight={600} fontSize={isMobile ? 14 : 16}>
+            {title}
+          </Typography>
           <Stack gap={1}>
             {readings.map((r) => (
               <Stack
@@ -56,20 +62,28 @@ const MealSection = ({ title, readings }: Props) => {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Stack direction="row" gap={1.25} alignItems={"center"}>
+                <Stack
+                  direction="row"
+                  gap={isMobile ? 1 : 1.25}
+                  alignItems={"center"}
+                >
                   <Typography
                     fontWeight={500}
                     color={colors.contentSecondary}
-                    fontSize={14}
+                    fontSize={isMobile ? 13 : 14}
                   >
                     {formatReadingTime(r.readingTime)}
                   </Typography>
-                  <Typography fontSize={14} color="text.disabled">
+                  <Typography
+                    fontSize={isMobile ? 12 : 14}
+                    color="text.disabled"
+                    mt={isMobile ? 0.18 : 0}
+                  >
                     {dayjs(r.dateTime).format("h:mm A")}
                   </Typography>
                 </Stack>
                 <Stack direction="row" gap={0.75} alignItems="center">
-                  <Typography fontWeight={600} fontSize={14}>
+                  <Typography fontWeight={600} fontSize={isMobile ? 13 : 14}>
                     {r.glucoseLevel} mg/dL
                   </Typography>
                   <span

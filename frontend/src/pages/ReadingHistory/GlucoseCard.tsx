@@ -1,5 +1,5 @@
-import { Stack, Typography } from "@mui/material";
-import { colors } from "../../constants";
+import { Stack, Typography, useMediaQuery } from "@mui/material";
+import { colors, screenSize } from "../../constants";
 import { getStyleBasedOnGlucoseLevel } from "../../utils";
 
 type Props = {
@@ -8,6 +8,7 @@ type Props = {
 };
 
 const GlucoseCard = ({ label, value }: Props) => {
+  const isMobile = useMediaQuery(`(max-width:${screenSize.mobile})`);
   const { textColor } = getStyleBasedOnGlucoseLevel(true, value);
   return (
     <Stack
@@ -25,10 +26,18 @@ const GlucoseCard = ({ label, value }: Props) => {
       >
         {label}
       </Typography>
-      <Typography fontSize={26} fontWeight={600} color={textColor}>
+      <Typography
+        fontSize={isMobile ? 20 : 26}
+        fontWeight={600}
+        color={textColor}
+      >
         {value}
       </Typography>
-      <Typography fontSize={16} fontWeight={600} color={textColor}>
+      <Typography
+        fontSize={isMobile ? 14 : 16}
+        fontWeight={600}
+        color={textColor}
+      >
         mg/dL
       </Typography>
     </Stack>
