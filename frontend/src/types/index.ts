@@ -125,3 +125,52 @@ export type ReadingsByFilterResponse = {
   lowestGlucoseLevel: number;
   readings: [ReadingDateGroup];
 };
+
+export type ReadingReportEntry = {
+  glucoseLevel: number;
+  time: string;
+  meals: string[];
+};
+
+export type ReportMealTimings = {
+  [ReadingTiming.BEFORE_BREAKFAST]: ReadingReportEntry | null;
+  [ReadingTiming.AFTER_BREAKFAST]: ReadingReportEntry | null;
+  [ReadingTiming.BEFORE_LUNCH]: ReadingReportEntry | null;
+  [ReadingTiming.AFTER_LUNCH]: ReadingReportEntry | null;
+  [ReadingTiming.BEFORE_DINNER]: ReadingReportEntry | null;
+  [ReadingTiming.AFTER_DINNER]: ReadingReportEntry | null;
+};
+
+export type ReportDateEntry = {
+  date: string;
+  readings: ReportMealTimings;
+};
+
+export type User = {
+  _id: string;
+  username: string;
+  email: string;
+  birthYear: string;
+  postMealPreferences: [
+    {
+      userId: string;
+      updatedAt: string;
+      createdAt: string;
+      unit: string;
+      value: number;
+      _id: string;
+    }
+  ];
+  gender: GenderType;
+  initialSetupDone: false;
+  setupProgressDetails: {
+    userId: string;
+    progress: {
+      trackingPreferences: boolean;
+      medications: boolean;
+    };
+    completedAt: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};

@@ -162,6 +162,26 @@ export const typeDefs = gql`
     readings: [ReadingDateGroup]
   }
 
+  type ReadingReportEntry {
+    glucoseLevel: Int
+    time: String
+    meals: [String]
+  }
+
+  type ReportMealTimings {
+    BEFORE_BREAKFAST: ReadingReportEntry
+    AFTER_BREAKFAST: ReadingReportEntry
+    BEFORE_LUNCH: ReadingReportEntry
+    AFTER_LUNCH: ReadingReportEntry
+    BEFORE_DINNER: ReadingReportEntry
+    AFTER_DINNER: ReadingReportEntry
+  }
+
+  type ReportDateEntry {
+    date: String
+    readings: ReportMealTimings
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -246,6 +266,11 @@ export const typeDefs = gql`
       toDate: String!
       readingTimes: [ReadingTiming!]!
     ): AllReadingsResponse!
+
+    getReadingsForReport(
+      fromDate: String!
+      toDate: String!
+    ): [ReportDateEntry!]!
 
     getUserSetupProgress: UserSetupProgress
   }
