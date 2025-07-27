@@ -1,3 +1,5 @@
+import { SxProps } from "@mui/material";
+
 export const APP_TOKEN_KEY = "rakshAppToken";
 
 export const APP_NAME = "DiaLog";
@@ -85,4 +87,17 @@ export const medicationColors = {
     icon: "#DC2627",
     text: "#DC2627",
   },
+};
+
+export const AccordionStyles: SxProps = {
+  border: "1px solid",
+  borderColor: "divider",
+  borderRadius: "8px !important",
+  overflow: "hidden",
+  "&::before": {
+    display: "none",
+  },
+};
+export const AccordionSummaryStyles = {
+  borderRadius: "8px !important",
 };

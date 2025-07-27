@@ -287,7 +287,11 @@ const ReadingHistory = () => {
             ))}
           </CustomMultiSelect>
         </Stack>
-        <Button buttonText="Apply filters" onClick={handleApplyFilter} />
+        <Button
+          buttonText="Apply filters"
+          onClick={handleApplyFilter}
+          styles={{ mt: 1 }}
+        />
       </Stack>
       <Stack p={2} height={"100%"}>
         {shouldShowSkeleton ? (

@@ -10,9 +10,10 @@ import {
   Stack,
   Backdrop,
   CircularProgress,
+  useMediaQuery,
 } from "@mui/material";
 import { AccessTimeFilled, ChevronRightOutlined } from "@mui/icons-material";
-import { colors, ROUTES } from "../../constants";
+import { colors, ROUTES, screenSize } from "../../constants";
 import Button from "../../components/CustomButton";
 import {
   ADD_POST_MEAL_TIME_MUTATION,
@@ -25,6 +26,8 @@ import { SetupSteps } from "../../types";
 import { GET_USER_SETUP_PROGRESS } from "../../graphql/queries";
 
 const TrackingPreferences = () => {
+  const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
+
   const [trackingPreference, setTrackingPreference] = useState("");
   const navigate = useNavigate();
 
@@ -73,80 +76,90 @@ const TrackingPreferences = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Card
-        sx={{
-          maxWidth: 500,
-
-          borderRadius: 3,
-          p: 3,
-          textAlign: "center",
-        }}
-      >
-        <Avatar
+      <Stack gap={isTablet ? 2 : 3} margin={"0 auto"}>
+        <Card
           sx={{
-            backgroundColor: "#E3F2FD",
-            color: "#1976D2",
-            margin: "auto",
-            mb: 2,
-            p: 1.5,
+            maxWidth: 500,
+
+            borderRadius: 3,
+            p: 3,
+            textAlign: "center",
           }}
         >
-          <AccessTimeFilled sx={{ fontSize: "28px", color: colors.primary }} />
-        </Avatar>
-
-        <Typography variant="h6" fontWeight={600}>
-          Tracking Preferences
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color={colors.contentSecondary}
-          sx={{ mt: 1, mb: 3 }}
-        >
-          When would you like to track your glucose readings after meals?
-        </Typography>
-
-        <RadioGroup
-          value={trackingPreference}
-          onChange={(e) => setTrackingPreference(e.target.value)}
-        >
-          {pmtTrackingOptions.map((option) => (
-            <FormControlLabel
-              key={option.value}
-              value={option.value}
-              control={<Radio />}
-              label={
-                <Box sx={{ textAlign: "left" }}>
-                  <Typography fontWeight={600}>{option.label}</Typography>
-                  <Typography variant="body2" color={colors.contentSecondary}>
-                    {option.description}
-                  </Typography>
-                </Box>
-              }
-              sx={{
-                border: `2px solid ${colors.lightGrey3}`,
-                borderRadius: 2,
-                mr: 0,
-                ml: 0.25,
-                p: 2,
-                mb: 2,
-                alignItems: "flex-start",
-                "&.Mui-checked": {
-                  borderColor: colors.lightGrey3,
-                },
-              }}
+          <Avatar
+            sx={{
+              backgroundColor: "#E3F2FD",
+              color: "#1976D2",
+              margin: "auto",
+              mb: 2,
+              p: 1.5,
+            }}
+          >
+            <AccessTimeFilled
+              sx={{ fontSize: "28px", color: colors.primary }}
             />
-          ))}
-        </RadioGroup>
-      </Card>
-      <Box sx={{ alignSelf: "flex-end" }}>
-        <Button
-          onClick={handleOnSave}
-          buttonText="Save & Continue"
-          endIcon={<ChevronRightOutlined />}
-          disabled={!trackingPreference}
-        />
-      </Box>
+          </Avatar>
+
+          <Typography variant="h6" fontWeight={600}>
+            Tracking Preferences
+          </Typography>
+
+          <Typography
+            variant="body2"
+            color={colors.contentSecondary}
+            sx={{ mt: 1, mb: 3 }}
+          >
+            When would you like to track your glucose readings after meals?
+          </Typography>
+
+          <RadioGroup
+            value={trackingPreference}
+            onChange={(e) => setTrackingPreference(e.target.value)}
+          >
+            {pmtTrackingOptions.map((option) => (
+              <FormControlLabel
+                key={option.value}
+                value={option.value}
+                control={<Radio />}
+                label={
+                  <Box sx={{ textAlign: "left" }}>
+                    <Typography fontWeight={600}>{option.label}</Typography>
+                    <Typography variant="body2" color={colors.contentSecondary}>
+                      {option.description}
+                    </Typography>
+                  </Box>
+                }
+                sx={{
+                  border: `2px solid ${colors.lightGrey3}`,
+                  borderRadius: 2,
+                  mr: 0,
+                  ml: 0.25,
+                  p: 2,
+                  mb: 2,
+                  alignItems: "flex-start",
+                  "&.Mui-checked": {
+                    borderColor: colors.lightGrey3,
+                  },
+                }}
+              />
+            ))}
+          </RadioGroup>
+        </Card>
+        <Box
+          sx={{
+            alignSelf: isTablet ? "flex-end" : "center",
+            width: "100%",
+          }}
+        >
+          <Button
+            onClick={handleOnSave}
+            buttonText="Save & Continue"
+            endIcon={<ChevronRightOutlined />}
+            disabled={!trackingPreference}
+            styles={{ width: "100%" }}
+          />
+        </Box>
+      </Stack>
     </Stack>
   );
 };
