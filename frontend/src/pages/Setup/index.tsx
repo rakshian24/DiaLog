@@ -6,8 +6,9 @@ import SetupProgressBar from "../../components/SetupProgressBar";
 import { SetupSteps } from "../../types";
 import MedicationOnboarding from "../../components/MedicationOnboarding";
 import { useEffect } from "react";
-import { ROUTES, screenSize } from "../../constants";
+import { colors, ROUTES, screenSize } from "../../constants";
 import { useNavigate } from "react-router-dom";
+import Skeleton from "./Skeleton";
 
 const InitSetup = () => {
   const isTablet = useMediaQuery(`(max-width:${screenSize.tablet})`);
@@ -31,7 +32,7 @@ const InitSetup = () => {
   }, [hasUserCompletedOnboarding, navigate]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Skeleton sx={{ bgcolor: colors.lightGrey4 }} />;
   }
 
   return (

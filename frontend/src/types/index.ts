@@ -59,12 +59,12 @@ export enum MedicationViewType {
 }
 
 export type MedicationsByMealType = {
-  BEFORE_BREAKFAST: [Medication];
-  AFTER_BREAKFAST: [Medication];
-  BEFORE_LUNCH: [Medication];
-  AFTER_LUNCH: [Medication];
-  BEFORE_DINNER: [Medication];
-  AFTER_DINNER: [Medication];
+  BEFORE_BREAKFAST: Medication[];
+  AFTER_BREAKFAST: Medication[];
+  BEFORE_LUNCH: Medication[];
+  AFTER_LUNCH: Medication[];
+  BEFORE_DINNER: Medication[];
+  AFTER_DINNER: Medication[];
 };
 
 export type Food = {
@@ -109,13 +109,13 @@ export type DashboardGroupedReadings = {
 };
 
 export type FilteredReadingGroup = {
-  Morning: [Reading];
-  Afternoon: [Reading];
-  Evening: [Reading];
+  Morning: Reading[];
+  Afternoon: Reading[];
+  Evening: Reading[];
 };
 
 export type ReadingDateGroup = {
-  date: String;
+  date: string;
   readings: FilteredReadingGroup;
 };
 

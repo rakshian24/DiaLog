@@ -25,6 +25,37 @@ type Props = {
   readingDate: string;
 };
 
+export const renderMedicationChips = (
+  required: any[] = [],
+  taken: any[] = [],
+  missed: any[] = [],
+  label: string,
+  readingTime?: ReadingTiming
+) =>
+  required.length > 0 && (
+    <Stack gap={1}>
+      <SectionLabel label={label} />
+      <Stack gap={1}>
+        {taken.map((med) => (
+          <MedicationChip
+            key={med._id}
+            med={med}
+            type="taken"
+            readingTime={readingTime}
+          />
+        ))}
+        {missed.map((med) => (
+          <MedicationChip
+            key={med._id}
+            med={med}
+            type="missed"
+            readingTime={readingTime}
+          />
+        ))}
+      </Stack>
+    </Stack>
+  );
+
 const ExpandMore = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== "expand",
 })<{ expand: boolean }>(({ expand }) => ({
@@ -57,37 +88,6 @@ const DashboardReadingCard = ({ meal, readings, readingDate }: Props) => {
   ];
 
   const readingTime = before?.readingTime ?? after?.readingTime;
-
-  const renderMedicationChips = (
-    required: any[] = [],
-    taken: any[] = [],
-    missed: any[] = [],
-    label: string,
-    readingTime?: ReadingTiming
-  ) =>
-    required.length > 0 && (
-      <Stack gap={1}>
-        <SectionLabel label={label} />
-        <Stack gap={1}>
-          {taken.map((med) => (
-            <MedicationChip
-              key={med._id}
-              med={med}
-              type="taken"
-              readingTime={readingTime}
-            />
-          ))}
-          {missed.map((med) => (
-            <MedicationChip
-              key={med._id}
-              med={med}
-              type="missed"
-              readingTime={readingTime}
-            />
-          ))}
-        </Stack>
-      </Stack>
-    );
 
   const getDosage = (med: any) =>
     med.dosagePerReadingTime?.[readingTime!] ?? med.dosage;
