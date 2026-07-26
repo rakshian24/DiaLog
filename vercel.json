@@ -1,19 +1,22 @@
 {
-	"version": 2,
-	"builds": [
-	  {
-		"src": "backend/index.ts",
-		"use": "@vercel/node"
-	  }
-	],
-	"routes": [
-	  {
-		"src": "/graphql",
-		"dest": "/backend/index.ts"
-	  },
-	  {
-		"src": "/(.*)",
-		"dest": "/backend/index.ts"
-	  }
-	]
-  }
+  "version": 2,
+  "engines": {
+    "node": "22.x"
+  },
+  "builds": [
+    {
+      "src": "backend/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/graphql",
+      "dest": "/backend/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/backend/index.ts"
+    }
+  ]
+}

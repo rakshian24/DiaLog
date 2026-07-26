@@ -1,10 +1,9 @@
 {
   "files": {
     "main.css": "/static/css/main.43b763cf.css",
-    "main.js": "/static/js/main.45950b09.js",
+    "main.js": "/static/js/main.238ea35a.js",
     "static/js/977.85430b90.chunk.js": "/static/js/977.85430b90.chunk.js",
     "static/js/622.b9c611ec.chunk.js": "/static/js/622.b9c611ec.chunk.js",
-    "static/media/happy-pig.png": "/static/media/happy-pig.27efc9099976a7be8ffe.png",
     "static/media/logo.png": "/static/media/logo.3b6f1e87311d0c8e669d.png",
     "static/media/roboto-latin-700-normal.woff2": "/static/media/roboto-latin-700-normal.4535474e1cf8598695ad.woff2",
     "static/media/roboto-latin-500-normal.woff2": "/static/media/roboto-latin-500-normal.7077203b1982951ecf76.woff2",
@@ -64,12 +63,12 @@
     "static/media/roboto-greek-ext-400-normal.woff": "/static/media/roboto-greek-ext-400-normal.16eb83b4a3b1ea994243.woff",
     "index.html": "/index.html",
     "main.43b763cf.css.map": "/static/css/main.43b763cf.css.map",
-    "main.45950b09.js.map": "/static/js/main.45950b09.js.map",
+    "main.238ea35a.js.map": "/static/js/main.238ea35a.js.map",
     "977.85430b90.chunk.js.map": "/static/js/977.85430b90.chunk.js.map",
     "622.b9c611ec.chunk.js.map": "/static/js/622.b9c611ec.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.43b763cf.css",
-    "static/js/main.45950b09.js"
+    "static/js/main.238ea35a.js"
   ]
 }
