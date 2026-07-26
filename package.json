@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Your personalized companion to manage blood sugar, meals, and medication—simply and intelligently.",
   "main": "index.ts",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "start": "ts-node backend/index.ts",
     "server": "nodemon backend/index.ts",

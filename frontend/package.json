@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:5001",
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@apollo/client": "^3.9.4",
     "@apollo/react-hooks": "^4.0.0",
