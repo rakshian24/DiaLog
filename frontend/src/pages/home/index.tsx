@@ -39,8 +39,9 @@ const DiaLogIllustration = ({ compact = false }: { compact?: boolean }) => (
     role="img"
     aria-label="DiaLog blood glucose and wellness dashboard"
     sx={{
-      width: compact ? 380 : "min(100%, 720px)",
+      width: compact ? "min(100%, 300px)" : "min(100%, 520px)",
       height: "auto",
+      display: "block",
       overflow: "visible",
     }}
   >
@@ -64,7 +65,7 @@ const DiaLogIllustration = ({ compact = false }: { compact?: boolean }) => (
       </filter>
     </defs>
 
-    <circle cx="260" cy="166" r="151" fill="#EAF4FF" />
+    <circle cx="260" cy="170" r="151" fill="#EAF4FF" />
     <circle cx="85" cy="86" r="11" fill="#FFB84D" opacity=".75" />
     <circle cx="446" cy="230" r="15" fill="#67C27C" opacity=".45" />
     <path
@@ -77,29 +78,29 @@ const DiaLogIllustration = ({ compact = false }: { compact?: boolean }) => (
 
     <g filter="url(#dialog-shadow)">
       <rect
-        x="102"
-        y="55"
-        width="316"
-        height="235"
+        x="96"
+        y="48"
+        width="328"
+        height="244"
         rx="28"
         fill="url(#dialog-card)"
       />
     </g>
-    <rect x="126" y="78" width="268" height="36" rx="12" fill="#F5F9FD" />
-    <circle cx="147" cy="96" r="8" fill="#67C27C" />
+    <rect x="120" y="72" width="280" height="38" rx="12" fill="#F5F9FD" />
+    <circle cx="142" cy="91" r="8" fill="#67C27C" />
     <text
-      x="164"
-      y="101"
+      x="159"
+      y="97"
       fill="#2D3747"
       fontFamily="Arial, sans-serif"
-      fontSize="14"
+      fontSize="16"
       fontWeight="700"
     >
       Today’s health snapshot
     </text>
 
-    <g transform="translate(126 132)">
-      <rect width="118" height="140" rx="18" fill="#FFF1F1" />
+    <g transform="translate(120 126)">
+      <rect width="120" height="148" rx="18" fill="#FFF1F1" />
       <path
         d="M58 20c-7 15-25 32-25 51a26 26 0 0 0 52 0c0-19-19-36-27-51Z"
         fill="url(#dialog-drop)"
@@ -113,36 +114,37 @@ const DiaLogIllustration = ({ compact = false }: { compact?: boolean }) => (
         opacity=".9"
       />
       <text
-        x="59"
-        y="115"
+        x="60"
+        y="120"
         textAnchor="middle"
         fill="#2D3747"
         fontFamily="Arial, sans-serif"
-        fontSize="17"
+        fontSize="19"
         fontWeight="700"
       >
         108
       </text>
       <text
-        x="59"
-        y="126"
+        x="60"
+        y="139"
         textAnchor="middle"
         fill="#6B7A90"
         fontFamily="Arial, sans-serif"
-        fontSize="9"
+        fontSize="10.5"
       >
         mg/dL · in range
       </text>
     </g>
 
-    <g transform="translate(260 132)">
-      <rect width="134" height="68" rx="18" fill="#F1F8F1" />
+    <g transform="translate(254 126)">
+      <rect width="140" height="70" rx="18" fill="#F1F8F1" />
       <text
         x="16"
-        y="22"
+        y="23"
         fill="#5C6C89"
         fontFamily="Arial, sans-serif"
-        fontSize="10"
+        fontSize="11.5"
+        fontWeight="600"
       >
         DAILY TREND
       </text>
@@ -157,8 +159,8 @@ const DiaLogIllustration = ({ compact = false }: { compact?: boolean }) => (
       <circle cx="118" cy="22" r="5" fill="#67C27C" />
     </g>
 
-    <g transform="translate(260 214)">
-      <rect width="63" height="44" rx="14" fill="#FFF8EF" />
+    <g transform="translate(254 210)">
+      <rect width="66" height="48" rx="14" fill="#FFF8EF" />
       <path
         d="M19 13v18M14 13v8c0 5 10 5 10 0v-8M43 13v18M43 13c8 4 8 12 0 13"
         fill="none"
@@ -166,8 +168,8 @@ const DiaLogIllustration = ({ compact = false }: { compact?: boolean }) => (
         strokeWidth="3"
         strokeLinecap="round"
       />
-      <rect x="71" width="63" height="44" rx="14" fill="#EEF5FF" />
-      <g transform="translate(71)">
+      <rect x="74" width="66" height="48" rx="14" fill="#EEF5FF" />
+      <g transform="translate(75 2)">
         <path
           d="m18 29 17-17a8 8 0 0 1 11 11L29 40a8 8 0 0 1-11-11Z"
           fill="none"
